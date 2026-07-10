@@ -52,6 +52,7 @@ class CommunitySeeder extends Seeder
         );
 
         $this->seedWelcomePost($editor);
+        $this->seedCommunityPosts($editor);
     }
 
     private function seedWelcomePost(User $editor): void
@@ -72,5 +73,44 @@ class CommunitySeeder extends Seeder
                 'published_at' => now(),
             ],
         );
+    }
+
+    private function seedCommunityPosts(User $editor): void
+    {
+        $posts = [
+            [
+                'slug' => 'today-in-laravel-with-receipts',
+                'kind' => PostKind::Article,
+                'title' => 'Today in Laravel, with receipts',
+                'body' => 'The discovery agent searches only approved Laravel sources, labels every AI-curated item, and always links back to the original creator.',
+                'tags' => ['Laravel AI', 'Azure OpenAI', 'Creator first'],
+            ],
+            [
+                'slug' => 'the-project-directory-is-open',
+                'kind' => PostKind::Project,
+                'title' => 'The project directory is open',
+                'body' => 'Share an application, package, tool, or learning resource. Open-source and verified Laravel Cloud links get their own signal.',
+                'tags' => ['Made with Laravel', 'Community', 'Laravel Cloud'],
+            ],
+            [
+                'slug' => 'a-community-not-a-content-farm',
+                'kind' => PostKind::Note,
+                'title' => 'A community, not a content farm',
+                'body' => 'Laraloom stores original commentary and short source metadata—not copied articles. Publishers can request corrections, removal, or a complete domain opt-out.',
+                'tags' => ['Open web', 'Publishers', 'Trust'],
+            ],
+        ];
+
+        foreach ($posts as $index => $post) {
+            Post::query()->updateOrCreate(
+                ['slug' => $post['slug']],
+                [
+                    ...$post,
+                    'user_id' => $editor->id,
+                    'status' => PostStatus::Published,
+                    'published_at' => now()->subMinutes(($index + 1) * 15),
+                ],
+            );
+        }
     }
 }
