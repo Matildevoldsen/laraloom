@@ -61,7 +61,7 @@ Then run one discovery cycle:
 php artisan curation:discover --sync
 ```
 
-The queued job is scheduled hourly and uses a uniqueness lock to prevent overlapping discovery runs.
+The discovery command runs hourly through Laravel's singleton scheduler. The underlying job also has a uniqueness lock to prevent overlapping runs when it is dispatched manually.
 
 ## Quality checks
 
@@ -74,7 +74,7 @@ The suite covers community permissions and interactions, profiles, publishing, U
 
 ## Deployment
 
-Laraloom is designed for Laravel Cloud with a PostgreSQL database and queue worker. Add the Azure and Tavily secrets as encrypted environment variables, run migrations and seed the approved source registry, then keep the scheduler and queue worker active.
+Laraloom is designed for Laravel Cloud with PostgreSQL and the application scheduler enabled. Add the Azure and Tavily secrets as encrypted environment variables, then run migrations and seed the approved source registry.
 
 ## Contributing
 
