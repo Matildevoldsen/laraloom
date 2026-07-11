@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\Reaction;
+use App\Models\Repost;
 use App\Models\User;
+use App\Observers\CommunityActivityObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -29,6 +34,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('access-admin', fn (User $user): bool => $user->is_admin);
+
+        Post::observe(CommunityActivityObserver::class);
+        Comment::observe(CommunityActivityObserver::class);
+        Reaction::observe(CommunityActivityObserver::class);
+        Repost::observe(CommunityActivityObserver::class);
 
         $this->configureDefaults();
     }

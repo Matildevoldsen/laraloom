@@ -38,6 +38,16 @@
             <div class="mx-auto mt-4 max-w-[1480px] px-4 sm:px-6"><div class="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{{ session('status') }}</div></div>
         @endif
 
+        <button
+            type="button"
+            data-realtime-refresh
+            @if (request()->route('post') instanceof \App\Models\Post) data-post-id="{{ request()->route('post')->id }}" @endif
+            class="pointer-events-none fixed left-1/2 top-20 z-40 flex -translate-x-1/2 translate-y-2 items-center gap-2 rounded-full border border-[#ff4d73]/25 bg-[#171218]/95 px-4 py-2 text-xs font-semibold text-[#ff9aaf] opacity-0 shadow-2xl shadow-black/40 backdrop-blur-xl transition duration-200 hover:border-[#ff4d73]/45 hover:text-white"
+        >
+            <span class="size-1.5 rounded-full bg-[#ff4d73] shadow-[0_0_10px_#ff4d73]"></span>
+            New activity · refresh
+        </button>
+
         <div class="mx-auto grid max-w-[1480px] grid-cols-1 gap-6 px-4 py-7 sm:px-6 lg:grid-cols-[190px_minmax(0,1fr)] xl:grid-cols-[190px_minmax(0,1fr)_270px]">
             <aside class="hidden lg:block">
                 <nav class="sticky top-24 space-y-1 text-sm">

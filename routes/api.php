@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\ReactionController;
 use App\Http\Controllers\Api\V1\RegistrationController;
 use App\Http\Controllers\Api\V1\RepostController;
+use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function (): void {
@@ -32,6 +33,8 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         ->name('auth.register');
 
     Route::middleware(['auth:sanctum', 'abilities:mobile'])->group(function (): void {
+        Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate'])
+            ->name('broadcasting.auth');
         Route::get('/me', [AuthTokenController::class, 'show'])->name('me');
         Route::get('/me/posts', MyPostController::class)->name('me.posts');
         Route::delete('/auth/token', [AuthTokenController::class, 'destroy'])->name('auth.destroy');
