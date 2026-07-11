@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Resources\Api\V1;
+
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/** @mixin Post */
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->getKey(),
+            'kind' => $this->kind->value,
+            'title' => $this->title,
+            'body' => $this->body,
+            'summary' => $this->summary,
+            'why_it_matters' => $this->why_it_matters,
+            'url' => $this->url,
+            'source' => [
+                'name' => $this->source_name,
+                'author' => $this->source_author,
+            ],
+            'tags' => $this->tags ?? [],
+            'is_ai_curated' => $this->is_ai_curated,
+            'published_at' => $this->published_at?->toIso8601String(),
+            'author' => UserResource::make($this->whenLoaded('user')),
+            'counts' => [
+                'reactions' => $this->whenCounted('reactingUsers'),
+                'bookmarks' => $this->whenCounted('bookmarkingUsers'),
+            ],
+        ];
+    }
+}
