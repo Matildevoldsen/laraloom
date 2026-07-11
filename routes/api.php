@@ -24,6 +24,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/me', [AuthTokenController::class, 'show'])->name('me');
         Route::delete('/auth/token', [AuthTokenController::class, 'destroy'])->name('auth.destroy');
         Route::get('/feed/following', FollowingFeedController::class)->name('feed.following');
+        Route::post('/posts', [PostController::class, 'store'])
+            ->middleware('throttle:community-publishing')
+            ->name('posts.store');
         Route::post('/posts/{post}/reaction', ReactionController::class)
             ->middleware('throttle:community-interactions')
             ->name('posts.reaction');

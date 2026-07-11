@@ -119,3 +119,21 @@ test('mobile interactions toggle and return authoritative counts', function () {
         ->assertOk()
         ->assertExactJson(['active' => false, 'count' => 0]);
 });
+
+test('a mobile user can publish a community post', function () {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user, ['mobile']);
+
+    $this->postJson('/api/v1/posts', [
+        'kind' => 'note',
+        'body' => 'I shipped a NativePHP app today.',
+        'tags' => 'NativePHP, Laravel',
+    ])->assertCreated()
+        ->assertJsonPath('data.author.id', $user->id)
+        ->assertJsonPath('data.kind', 'note');
+
+    $this->assertDatabaseHas('posts', [
+        'user_id' => $user->id,
+        'body' => 'I shipped a NativePHP app today.',
+    ]);
+});
