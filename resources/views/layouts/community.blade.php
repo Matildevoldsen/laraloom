@@ -51,6 +51,9 @@
                     @auth
                         <a href="{{ route('projects.create') }}" class="side-link">＋ <span>Submit a project</span></a>
                         <a href="{{ route('profiles.edit', auth()->user()) }}" class="side-link">↗ <span>Edit profile</span></a>
+                        @if (auth()->user()->is_admin)
+                            <a href="{{ route('admin.dashboard') }}" @class(['side-link', 'is-active' => request()->routeIs('admin.*')])>◉ <span>Admin</span></a>
+                        @endif
                     @endauth
                     <a href="{{ route('legal.content-policy') }}" class="side-link">✓ <span>Content principles</span></a>
                 </nav>

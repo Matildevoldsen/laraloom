@@ -39,6 +39,16 @@
                     <span class="icon-button">♡ <span>{{ $post->reacting_users_count ?? 0 }}</span></span>
                 @endauth
                 @if ($post->url)<a href="{{ $post->url }}" target="_blank" rel="noopener noreferrer" class="icon-button ml-auto">Visit source ↗</a>@endif
+                @can('update', $post)
+                    <a href="{{ route('posts.edit', $post) }}" class="icon-button {{ $post->url ? '' : 'ml-auto' }}">Edit</a>
+                @endcan
+                @can('delete', $post)
+                    <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('Delete this post permanently?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="icon-button text-red-400">Delete</button>
+                    </form>
+                @endcan
             </div>
         </div>
     </div>

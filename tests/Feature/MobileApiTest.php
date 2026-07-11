@@ -67,6 +67,25 @@ test('a mobile client can exchange credentials for a scoped token', function () 
     expect($user->tokens()->first()?->can('mobile'))->toBeTrue();
 });
 
+test('a mobile client can register and receives a scoped token', function () {
+    $response = $this->postJson('/api/v1/auth/register', [
+        'name' => 'Native Builder',
+        'username' => 'nativebuilder',
+        'email' => 'native@example.com',
+        'password' => 'secure-password',
+        'password_confirmation' => 'secure-password',
+        'device_name' => 'iPhone 17 Pro',
+    ]);
+
+    $response
+        ->assertCreated()
+        ->assertJsonPath('user.username', 'nativebuilder')
+        ->assertJsonStructure(['token', 'user']);
+
+    $user = User::query()->where('email', 'native@example.com')->sole();
+    expect($user->tokens()->first()?->can('mobile'))->toBeTrue();
+});
+
 test('invalid mobile credentials are rejected without creating a token', function () {
     $user = User::factory()->create(['password' => 'correct-password']);
 
@@ -136,4 +155,55 @@ test('a mobile user can publish a community post', function () {
         'user_id' => $user->id,
         'body' => 'I shipped a NativePHP app today.',
     ]);
+});
+
+test('a mobile member can list edit and delete only their own posts', function () {
+    $member = User::factory()->create();
+    $ownPost = Post::factory()->for($member)->create();
+    $otherPost = Post::factory()->create();
+    Sanctum::actingAs($member, ['mobile']);
+
+    $this->getJson('/api/v1/me/posts')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $ownPost->id)
+        ->assertJsonPath('data.0.permissions.update', true);
+
+    $this->patchJson("/api/v1/posts/{$ownPost->id}", [
+        'kind' => 'note',
+        'body' => 'Updated from the native app.',
+        'tags' => 'NativePHP, Laravel',
+    ])->assertOk()->assertJsonPath('data.body', 'Updated from the native app.');
+
+    $this->patchJson("/api/v1/posts/{$otherPost->id}", [
+        'kind' => 'note',
+        'body' => 'Not mine.',
+    ])->assertForbidden();
+
+    $this->deleteJson("/api/v1/posts/{$ownPost->id}")->assertNoContent();
+    $this->assertModelMissing($ownPost);
+});
+
+test('only admins can use the native moderation API', function () {
+    $post = Post::factory()->create([
+        'status' => PostStatus::Pending,
+        'published_at' => null,
+    ]);
+    $member = User::factory()->create();
+    Sanctum::actingAs($member, ['mobile']);
+
+    $this->getJson('/api/v1/admin')->assertForbidden();
+
+    $admin = User::factory()->create(['is_admin' => true]);
+    Sanctum::actingAs($admin, ['mobile']);
+
+    $this->getJson('/api/v1/admin')
+        ->assertOk()
+        ->assertJsonPath('data.counts.pending_posts', 1);
+
+    $this->patchJson("/api/v1/admin/posts/{$post->id}/status", [
+        'status' => PostStatus::Published->value,
+    ])->assertOk()->assertJsonPath('data.status', PostStatus::Published->value);
+
+    expect($post->refresh()->published_at)->not->toBeNull();
 });

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ContentRequestController;
 use App\Http\Controllers\FeedController;
@@ -31,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/posts', [PostController::class, 'store'])
         ->middleware('throttle:community-publishing')
         ->name('posts.store');
+    Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
     Route::get('/projects/create/new', [ProjectController::class, 'create'])->name('projects.create');
@@ -51,6 +55,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/@{user:username}/follow', FollowController::class)
         ->middleware('throttle:community-interactions')
         ->name('profiles.follow');
+
+    Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function (): void {
+        Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::patch('/posts/{post}/status', AdminPostStatusController::class)->name('posts.status');
+    });
 });
 
 require __DIR__.'/settings.php';

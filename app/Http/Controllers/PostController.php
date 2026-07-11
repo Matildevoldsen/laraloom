@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreatePostAction;
+use App\Actions\UpdatePostAction;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -28,6 +30,23 @@ class PostController extends Controller
         $createPost->execute($user, $request->validated());
 
         return to_route('home')->with('status', 'Your post is live.');
+    }
+
+    public function edit(Post $post): View
+    {
+        Gate::authorize('update', $post);
+
+        return view('posts.edit', compact('post'));
+    }
+
+    public function update(
+        UpdatePostRequest $request,
+        Post $post,
+        UpdatePostAction $updatePost,
+    ): RedirectResponse {
+        $updatePost->execute($post, $request->validated());
+
+        return to_route('home')->with('status', 'Post updated.');
     }
 
     public function destroy(Post $post): RedirectResponse

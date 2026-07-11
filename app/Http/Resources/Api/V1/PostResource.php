@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Api\V1;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,9 +17,12 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = $request->user('sanctum');
+
         return [
             'id' => $this->getKey(),
             'kind' => $this->kind->value,
+            'status' => $this->status->value,
             'title' => $this->title,
             'body' => $this->body,
             'summary' => $this->summary,
@@ -35,6 +39,10 @@ class PostResource extends JsonResource
             'counts' => [
                 'reactions' => $this->whenCounted('reactingUsers'),
                 'bookmarks' => $this->whenCounted('bookmarkingUsers'),
+            ],
+            'permissions' => [
+                'update' => $user instanceof User && $user->can('update', $this->resource),
+                'delete' => $user instanceof User && $user->can('delete', $this->resource),
             ],
         ];
     }
