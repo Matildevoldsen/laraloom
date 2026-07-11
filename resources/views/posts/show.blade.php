@@ -10,7 +10,7 @@
     @endif
 
     <section id="conversation" class="mt-8 scroll-mt-24">
-        <div class="mb-4 flex items-center justify-between">
+        <div class="mb-4 flex items-center justify-between" data-realtime-conversation-summary>
             <div><p class="text-xs font-semibold uppercase tracking-[.18em] text-[#ff7693]">Conversation</p><h2 class="mt-1 text-xl font-semibold">{{ $post->comments_count }} replies</h2></div>
         </div>
 
@@ -26,7 +26,7 @@
             <a href="{{ route('login') }}" class="mb-5 block rounded-2xl border border-white/8 px-5 py-4 text-sm text-zinc-500 hover:text-white">Sign in to join the conversation →</a>
         @endauth
 
-        <div class="space-y-3">
+        <div class="space-y-3" data-realtime-comments>
             @forelse ($comments as $comment)
                 <article class="loom-card p-5">
                     <div class="flex items-start gap-3">

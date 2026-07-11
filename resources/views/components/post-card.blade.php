@@ -1,6 +1,6 @@
 @props(['post', 'compact' => true])
 
-<article class="loom-card group overflow-visible">
+<article class="loom-card group overflow-visible" data-realtime-post data-post-id="{{ $post->id }}">
     <div class="p-5 sm:p-6">
         <header class="flex items-center gap-3">
             <a href="{{ $post->user ? route('profiles.show', $post->user) : '#' }}" class="loom-avatar shrink-0">

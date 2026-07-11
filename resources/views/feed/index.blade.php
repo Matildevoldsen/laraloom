@@ -20,7 +20,7 @@
 
     @if ($search)<p class="mb-4 text-sm text-zinc-500">Results for <span class="text-zinc-200">“{{ $search }}”</span></p>@endif
 
-    <div class="space-y-4">
+    <div class="space-y-4" data-realtime-feed>
         @forelse ($posts as $post)
             <x-post-card :$post />
         @empty
