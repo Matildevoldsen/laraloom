@@ -20,7 +20,7 @@ class PostStatusController extends Controller
         $post = $moderatePost->execute($post, $status);
 
         return PostResource::make(
-            $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers']),
+            $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']),
         );
     }
 }

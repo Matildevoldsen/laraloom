@@ -39,10 +39,16 @@ class PostResource extends JsonResource
             'counts' => [
                 'reactions' => $this->whenCounted('reactingUsers'),
                 'bookmarks' => $this->whenCounted('bookmarkingUsers'),
+                'comments' => $this->whenCounted('comments'),
+                'reposts' => $this->whenCounted('repostingUsers'),
             ],
+            'is_reacted' => (bool) ($this->getAttribute('is_reacted') ?? false),
+            'is_bookmarked' => (bool) ($this->getAttribute('is_bookmarked') ?? false),
+            'is_reposted' => (bool) ($this->getAttribute('is_reposted') ?? false),
             'permissions' => [
                 'update' => $user instanceof User && $user->can('update', $this->resource),
                 'delete' => $user instanceof User && $user->can('delete', $this->resource),
+                'moderate' => $user instanceof User && $user->is_admin,
             ],
         ];
     }

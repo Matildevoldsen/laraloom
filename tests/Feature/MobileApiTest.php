@@ -207,3 +207,16 @@ test('only admins can use the native moderation API', function () {
 
     expect($post->refresh()->published_at)->not->toBeNull();
 });
+
+test('a mobile member can permanently delete their account with their password', function () {
+    $user = User::factory()->create(['password' => 'correct-password']);
+    Sanctum::actingAs($user, ['mobile']);
+
+    $this->deleteJson('/api/v1/me', ['password' => 'wrong-password'])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('password');
+    $this->assertModelExists($user);
+
+    $this->deleteJson('/api/v1/me', ['password' => 'correct-password'])->assertNoContent();
+    $this->assertModelMissing($user);
+});

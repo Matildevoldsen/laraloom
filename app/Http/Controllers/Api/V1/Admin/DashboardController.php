@@ -18,7 +18,7 @@ class DashboardController extends Controller
     {
         $posts = Post::query()
             ->with('user')
-            ->withCount(['reactingUsers', 'bookmarkingUsers'])
+            ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->orderByRaw("case when status = 'pending' then 0 else 1 end")
             ->latest()
             ->limit(40)

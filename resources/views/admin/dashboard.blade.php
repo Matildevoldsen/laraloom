@@ -33,21 +33,19 @@
                         <h2 class="mt-2 font-semibold text-zinc-100">{{ $post->title ?: 'Community note' }}</h2>
                         <p class="mt-1 line-clamp-2 text-sm leading-6 text-zinc-500">{{ $post->body ?: $post->summary }}</p>
                     </div>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ([[App\PostStatus::Published, 'Publish'], [App\PostStatus::Rejected, 'Reject']] as [$status, $label])
-                            <form method="POST" action="{{ route('admin.posts.status', $post) }}">
-                                @csrf
-                                @method('PATCH')
-                                <input type="hidden" name="status" value="{{ $status->value }}" />
-                                <button class="rounded-full border border-white/10 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-[#ff4d73]/50 hover:text-white">{{ $label }}</button>
-                            </form>
-                        @endforeach
-                        <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('Delete this post permanently?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="rounded-full border border-red-400/20 px-3 py-1.5 text-xs text-red-300 hover:bg-red-400/10">Delete</button>
-                        </form>
-                    </div>
+                    <details class="relative">
+                        <summary class="grid size-9 cursor-pointer list-none place-items-center rounded-full text-lg text-zinc-600 transition hover:bg-white/5 hover:text-white" aria-label="Moderation actions">•••</summary>
+                        <div class="absolute right-0 z-20 mt-2 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#17191f] p-1.5 text-sm shadow-2xl">
+                            @if ($post->status !== App\PostStatus::Published)
+                                <form method="POST" action="{{ route('admin.posts.status', $post) }}">@csrf @method('PATCH')<input type="hidden" name="status" value="published" /><button class="w-full rounded-lg px-3 py-2 text-left text-zinc-300 hover:bg-white/5">Publish</button></form>
+                            @endif
+                            <a class="block rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/5" href="{{ route('posts.edit', $post) }}">Edit post</a>
+                            @if ($post->status !== App\PostStatus::Rejected)
+                                <form method="POST" action="{{ route('admin.posts.status', $post) }}">@csrf @method('PATCH')<input type="hidden" name="status" value="rejected" /><button class="w-full rounded-lg px-3 py-2 text-left text-zinc-300 hover:bg-white/5">Reject</button></form>
+                            @endif
+                            <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('Delete this post permanently?')">@csrf @method('DELETE')<button class="w-full rounded-lg px-3 py-2 text-left text-red-400 hover:bg-red-400/10">Delete permanently</button></form>
+                        </div>
+                    </details>
                 </div>
             </article>
         @empty

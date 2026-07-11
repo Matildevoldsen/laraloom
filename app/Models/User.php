@@ -117,6 +117,18 @@ class User extends Authenticatable implements PasskeyUser
         return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
     }
 
+    /** @return BelongsToMany<Post, $this> */
+    public function repostedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'reposts')->withTimestamps();
+    }
+
+    /** @return HasMany<Comment, $this> */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function avatarUrl(): string
     {
         if (filled($this->avatar_url)) {

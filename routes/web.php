@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentRequestController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\RepostController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', FeedController::class)->name('home');
@@ -19,6 +21,7 @@ Route::redirect('/dashboard', '/')->name('dashboard');
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 Route::get('/@{user:username}', [ProfileController::class, 'show'])->name('profiles.show');
+Route::get('/posts/{post}', [PostController::class, 'show'])->whereNumber('post')->name('posts.show');
 
 Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/content-policy', [LegalController::class, 'contentPolicy'])->name('legal.content-policy');
@@ -36,6 +39,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
+        ->middleware('throttle:community-interactions')
+        ->name('posts.comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/posts/{post}/repost', RepostController::class)
+        ->middleware('throttle:community-interactions')
+        ->name('posts.repost');
 
     Route::get('/projects/create/new', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [ProjectController::class, 'store'])

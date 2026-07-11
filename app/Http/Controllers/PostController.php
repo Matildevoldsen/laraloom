@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+    public function show(Post $post): View
+    {
+        abort_unless($post->published_at?->isPast(), 404);
+        $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
+        $comments = $post->comments()
+            ->whereNull('parent_id')
+            ->with(['user', 'replies.user'])
+            ->oldest()
+            ->get();
+
+        return view('posts.show', compact('comments', 'post'));
+    }
+
     public function create(): View
     {
         Gate::authorize('create', Post::class);

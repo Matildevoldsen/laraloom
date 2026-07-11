@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -61,6 +62,18 @@ class Post extends Model
     public function bookmarkingUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function repostingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'reposts')->withTimestamps();
+    }
+
+    /** @return HasMany<Comment, $this> */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
     /** @param Builder<Post> $query */

@@ -10,6 +10,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\Api\V1\PostResource;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -23,9 +24,7 @@ class PostController extends Controller
         abort_unless($user instanceof User, 401);
         $post = $createPost->execute($user, $request->validated());
 
-        return PostResource::make(
-            $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers']),
-        )->response()->setStatusCode(201);
+        return PostResource::make($this->prepare($post, $user))->response()->setStatusCode(201);
     }
 
     public function update(
@@ -35,9 +34,9 @@ class PostController extends Controller
     ): PostResource {
         $post = $updatePost->execute($post, $request->validated());
 
-        return PostResource::make(
-            $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers']),
-        );
+        $user = $request->user();
+
+        return PostResource::make($this->prepare($post, $user instanceof User ? $user : null));
     }
 
     public function destroy(Post $post): JsonResponse
@@ -59,8 +58,21 @@ class PostController extends Controller
             404,
         );
 
-        return PostResource::make(
-            $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers']),
-        );
+        return PostResource::make($this->prepare($post, $user instanceof User ? $user : null));
+    }
+
+    private function prepare(Post $post, ?User $user): Post
+    {
+        $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
+
+        if ($user instanceof User) {
+            $post->loadExists([
+                'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($user->id),
+                'bookmarkingUsers as is_bookmarked' => fn (Builder $query): Builder => $query->whereKey($user->id),
+                'repostingUsers as is_reposted' => fn (Builder $query): Builder => $query->whereKey($user->id),
+            ]);
+        }
+
+        return $post;
     }
 }

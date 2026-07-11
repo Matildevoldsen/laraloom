@@ -19,7 +19,7 @@ class ProfileController extends Controller
 
         $posts = $user->posts()
             ->where('status', PostStatus::Published)
-            ->withCount(['reactingUsers', 'bookmarkingUsers'])
+            ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->latest('published_at')
             ->limit(12)
             ->get();
