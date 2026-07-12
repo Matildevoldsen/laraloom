@@ -27,6 +27,19 @@
                         <svg x-show="$flux.dark" x-cloak class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.6 15.5A8.5 8.5 0 0 1 8.5 3.4 8.5 8.5 0 1 0 20.6 15.5Z"/></svg>
                     </button>
                     @auth
+                        <a
+                            href="{{ route('bookmarks.index') }}"
+                            @class([
+                                'grid size-10 place-items-center rounded-full text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 dark:hover:bg-white/5 dark:hover:text-white',
+                                'bg-zinc-100 text-zinc-950 dark:bg-white/5 dark:text-white' => request()->routeIs('bookmarks.*'),
+                            ])
+                            aria-label="Bookmarks"
+                            title="Bookmarks"
+                        >
+                            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 3.75h12v17l-6-3.75-6 3.75v-17Z" />
+                            </svg>
+                        </a>
                         <livewire:notification-indicator />
                         <flux:modal.trigger name="community-composer">
                             <flux:button variant="primary" icon="pencil-square" class="hidden rounded-full! bg-[#ff4d73]! hover:bg-[#ff6382]! sm:inline-flex">Post</flux:button>
@@ -73,6 +86,12 @@
                         <a href="{{ route('projects.create') }}" class="side-link">＋ <span>Submit a project</span></a>
                         <a href="{{ route('notifications.index') }}" @class(['side-link', 'is-active' => request()->routeIs('notifications.*')])>
                             ◌ <span>Notifications</span>
+                        </a>
+                        <a href="{{ route('bookmarks.index') }}" @class(['side-link', 'is-active' => request()->routeIs('bookmarks.*')])>
+                            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 3.75h12v17l-6-3.75-6 3.75v-17Z" />
+                            </svg>
+                            <span>Bookmarks</span>
                         </a>
                         <a href="{{ route('direct-messages.index') }}" @class(['side-link', 'is-active' => request()->routeIs('direct-messages.*')])>✉ <span>Messages</span></a>
                         <a href="{{ route('profiles.edit', auth()->user()) }}" class="side-link">↗ <span>Edit profile</span></a>
