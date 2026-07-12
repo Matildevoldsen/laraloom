@@ -10,14 +10,18 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
-    public function show(Post $post): View
+    public function show(Request $request, Post $post): View
     {
         abort_unless($post->published_at?->isPast(), 404);
-        $post->load(['user', 'attachments'])->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
+        $viewer = $request->user();
+        $post->load(['user', 'attachments'])
+            ->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->loadViewerInteractionState($viewer instanceof User ? $viewer : null);
         $comments = $post->comments()
             ->whereNull('parent_id')
             ->with(['user', 'replies.user'])

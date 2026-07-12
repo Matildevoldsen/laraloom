@@ -37,6 +37,7 @@ it('maps model activity to a typed broadcast event', function () {
     Event::fake([CommunityActivity::class]);
     $post = Post::factory()->create();
     $comment = Comment::factory()->for($post)->create();
+    request()->headers->set('X-Socket-ID', '123.456');
 
     app(CommunityActivityObserver::class)->created($comment);
 
@@ -44,7 +45,8 @@ it('maps model activity to a typed broadcast event', function () {
         CommunityActivity::class,
         fn (CommunityActivity $event): bool => $event->type === CommunityActivityType::CommentCreated
             && $event->postId === $post->id
-            && $event->isPublic,
+            && $event->isPublic
+            && $event->socket === '123.456',
     );
 });
 

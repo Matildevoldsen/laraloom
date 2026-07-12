@@ -21,7 +21,7 @@ it('refreshes visible fragments automatically when activity arrives', function (
     $javascript = file_get_contents(resource_path('js/app.js'));
 
     expect($javascript)
-        ->toContain("listen('.community.activity', refreshVisibleContent)")
+        ->toContain('void refreshPostInteractions(activity.post_id)')
         ->toContain("replaceFragment(document, '[data-realtime-feed]')")
         ->toContain("replaceFragment(document, '[data-realtime-comments]')")
         ->not->toContain("listen('.community.activity', revealRefresh)");

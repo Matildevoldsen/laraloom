@@ -15,6 +15,7 @@ class FeedController extends Controller
 {
     public function __invoke(Request $request): View
     {
+        $viewer = $request->user();
         $feed = $request->string('feed')->toString() ?: 'today';
         $search = $request->string('q')->trim()->limit(80)->toString();
 
@@ -22,6 +23,7 @@ class FeedController extends Controller
             ->published()
             ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->when($search !== '', function (Builder $query) use ($search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query->whereLike('title', "%{$search}%")

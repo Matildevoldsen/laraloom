@@ -1,6 +1,12 @@
 @props(['post', 'compact' => true])
 
-<article class="loom-card group overflow-visible" data-realtime-post data-post-id="{{ $post->id }}">
+@php
+    $isBookmarked = (bool) ($post->getAttribute('is_bookmarked') ?? false);
+    $isReacted = (bool) ($post->getAttribute('is_reacted') ?? false);
+    $isReposted = (bool) ($post->getAttribute('is_reposted') ?? false);
+@endphp
+
+<article class="loom-card group overflow-visible" data-realtime-post data-post-id="{{ $post->id }}" data-refresh-url="{{ route('posts.show', $post) }}">
     <div class="p-5 sm:p-6">
         <header class="flex items-center gap-3">
             <a href="{{ $post->user ? route('profiles.show', $post->user) : '#' }}" class="loom-avatar shrink-0">
@@ -67,16 +73,91 @@
             </div>
         @endif
 
-        <footer class="mt-4 flex items-center gap-1 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-white/6">
-            <a href="{{ route('posts.show', $post) }}#conversation" class="icon-button" title="Replies">◯ <span>{{ $post->comments_count ?? 0 }}</span></a>
-            @auth
-                <form method="POST" action="{{ route('posts.repost', $post) }}">@csrf<button class="icon-button" title="Repost">⇄ <span>{{ $post->reposting_users_count ?? 0 }}</span></button></form>
-                <form method="POST" action="{{ route('posts.reaction', $post) }}">@csrf<button class="icon-button" title="Appreciate">♡ <span>{{ $post->reacting_users_count ?? 0 }}</span></button></form>
-                <form method="POST" action="{{ route('posts.bookmark', $post) }}">@csrf<button class="icon-button" title="Bookmark">⌑</button></form>
-            @else
-                <span class="icon-button">⇄ <span>{{ $post->reposting_users_count ?? 0 }}</span></span>
-                <span class="icon-button">♡ <span>{{ $post->reacting_users_count ?? 0 }}</span></span>
-            @endauth
+        <footer class="mt-4 flex items-center gap-3 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-white/6" data-post-interactions>
+            <div class="flex min-w-0 max-w-md flex-1 items-center justify-between">
+                <a
+                    href="{{ route('posts.show', $post) }}#conversation"
+                    class="post-action-button post-action-reply"
+                    aria-label="View conversation, {{ $post->comments_count ?? 0 }} replies"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20.25 11.5a7.75 7.75 0 0 1-8.05 7.74 9.6 9.6 0 0 1-3.18-.55L4 20l1.35-4.4A7.75 7.75 0 1 1 20.25 11.5Z" />
+                    </svg>
+                    <span>{{ $post->comments_count ?? 0 }}</span>
+                </a>
+
+                @auth
+                    <form method="POST" action="{{ route('posts.repost', $post) }}" data-post-action data-action="repost" data-post-id="{{ $post->id }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            @class(['post-action-button post-action-repost', 'is-active' => $isReposted])
+                            data-post-action-button
+                            data-active-label="Undo repost"
+                            data-inactive-label="Repost"
+                            aria-label="{{ $isReposted ? 'Undo repost' : 'Repost' }}"
+                            aria-pressed="{{ $isReposted ? 'true' : 'false' }}"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m17 3 4 4-4 4" />
+                                <path d="M3 7h18M7 21l-4-4 4-4" />
+                                <path d="M21 17H3" />
+                            </svg>
+                            <span data-post-action-count>{{ $post->reposting_users_count ?? 0 }}</span>
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('posts.reaction', $post) }}" data-post-action data-action="reaction" data-post-id="{{ $post->id }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            @class(['post-action-button post-action-reaction', 'is-active' => $isReacted])
+                            data-post-action-button
+                            data-active-label="Unlike"
+                            data-inactive-label="Like"
+                            aria-label="{{ $isReacted ? 'Unlike' : 'Like' }}"
+                            aria-pressed="{{ $isReacted ? 'true' : 'false' }}"
+                        >
+                            <svg data-post-action-inactive-icon @class(['hidden' => $isReacted]) viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
+                            </svg>
+                            <svg data-post-action-active-icon @class(['hidden' => ! $isReacted]) viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
+                            </svg>
+                            <span data-post-action-count>{{ $post->reacting_users_count ?? 0 }}</span>
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('posts.bookmark', $post) }}" data-post-action data-action="bookmark" data-post-id="{{ $post->id }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            @class(['post-action-button post-action-bookmark', 'is-active' => $isBookmarked])
+                            data-post-action-button
+                            data-active-label="Remove bookmark"
+                            data-inactive-label="Bookmark"
+                            aria-label="{{ $isBookmarked ? 'Remove bookmark' : 'Bookmark' }}"
+                            aria-pressed="{{ $isBookmarked ? 'true' : 'false' }}"
+                        >
+                            <svg data-post-action-inactive-icon @class(['hidden' => $isBookmarked]) viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 3.75h12v17l-6-3.75-6 3.75v-17Z" />
+                            </svg>
+                            <svg data-post-action-active-icon @class(['hidden' => ! $isBookmarked]) viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 3.75h12v17l-6-3.75-6 3.75v-17Z" />
+                            </svg>
+                        </button>
+                    </form>
+                @else
+                    <span class="post-action-button" aria-label="{{ $post->reposting_users_count ?? 0 }} reposts">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m17 3 4 4-4 4M3 7h18M7 21l-4-4 4-4M21 17H3" /></svg>
+                        <span>{{ $post->reposting_users_count ?? 0 }}</span>
+                    </span>
+                    <span class="post-action-button" aria-label="{{ $post->reacting_users_count ?? 0 }} likes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" /></svg>
+                        <span>{{ $post->reacting_users_count ?? 0 }}</span>
+                    </span>
+                @endauth
+            </div>
             @if ($post->url)<a href="{{ $post->url }}" target="_blank" rel="noopener noreferrer" class="icon-button ml-auto">Source ↗</a>@endif
         </footer>
     </div>

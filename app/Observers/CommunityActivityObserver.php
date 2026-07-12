@@ -55,10 +55,10 @@ class CommunityActivityObserver
             return;
         }
 
-        CommunityActivity::dispatch(
+        broadcast(new CommunityActivity(
             $type,
             $post->id,
             $post->status === PostStatus::Published && $post->published_at?->isPast() === true,
-        );
+        ))->toOthers();
     }
 }

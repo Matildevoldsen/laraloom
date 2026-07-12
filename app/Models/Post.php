@@ -32,6 +32,9 @@ use Illuminate\Support\Carbon;
  * @property array<string, mixed>|null $metadata
  * @property bool $is_ai_curated
  * @property int|null $ai_confidence
+ * @property bool $is_bookmarked
+ * @property bool $is_reacted
+ * @property bool $is_reposted
  * @property Carbon|null $source_published_at
  * @property Carbon|null $published_at
  */
@@ -95,6 +98,35 @@ class Post extends Model
         $query->where('status', PostStatus::Published)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
+    }
+
+    /** @param Builder<Post> $query */
+    public function scopeWithViewerInteractionState(Builder $query, ?User $viewer): void
+    {
+        if (! $viewer instanceof User) {
+            return;
+        }
+
+        $query->withExists([
+            'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+            'bookmarkingUsers as is_bookmarked' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+            'repostingUsers as is_reposted' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+        ]);
+    }
+
+    public function loadViewerInteractionState(?User $viewer): self
+    {
+        if (! $viewer instanceof User) {
+            return $this;
+        }
+
+        $this->loadExists([
+            'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+            'bookmarkingUsers as is_bookmarked' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+            'repostingUsers as is_reposted' => fn (Builder $query): Builder => $query->whereKey($viewer->id),
+        ]);
+
+        return $this;
     }
 
     /** @return array<string, string> */

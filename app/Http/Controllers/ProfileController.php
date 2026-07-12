@@ -30,6 +30,7 @@ class ProfileController extends Controller
             ->where('status', PostStatus::Published)
             ->with('attachments')
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('published_at')
             ->limit(12)
             ->get();
@@ -44,6 +45,7 @@ class ProfileController extends Controller
             ->where('status', PostStatus::Published)
             ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('reactions.created_at')
             ->limit(20)
             ->get();
@@ -51,6 +53,7 @@ class ProfileController extends Controller
             ->where('status', PostStatus::Published)
             ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('reposts.created_at')
             ->limit(20)
             ->get();

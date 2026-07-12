@@ -1,5 +1,6 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { initializePostActions } from './post-actions';
 
 const key = import.meta.env.VITE_PUSHER_APP_KEY;
 const refreshButton = document.querySelector('[data-realtime-refresh]');
@@ -90,6 +91,7 @@ const initializeInfiniteFeed = () => {
 };
 
 initializeInfiniteFeed();
+initializePostActions();
 scrollMessageThread();
 void markVisibleConversationRead();
 
@@ -127,6 +129,44 @@ if (key && refreshButton instanceof HTMLButtonElement) {
         current.replaceWith(updated);
 
         return true;
+    };
+
+    const refreshPostInteractions = async (postId) => {
+        const posts = Array.from(window.document.querySelectorAll('[data-realtime-post]'))
+            .filter((post) => post instanceof HTMLElement && post.dataset.postId === String(postId));
+        const refreshUrl = posts[0]?.dataset.refreshUrl;
+
+        if (!refreshUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(refreshUrl, {
+                credentials: 'same-origin',
+                headers: { 'X-Sourcefolk-Realtime': 'true' },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Realtime post refresh failed with ${response.status}.`);
+            }
+
+            const updatedDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
+            const updatedInteractions = updatedDocument.querySelector('[data-realtime-post] [data-post-interactions]');
+
+            if (!(updatedInteractions instanceof HTMLElement)) {
+                throw new Error('Realtime post refresh did not contain interaction controls.');
+            }
+
+            posts.forEach((post) => {
+                const currentInteractions = post.querySelector('[data-post-interactions]');
+
+                if (currentInteractions instanceof HTMLElement) {
+                    currentInteractions.replaceWith(updatedInteractions.cloneNode(true));
+                }
+            });
+        } catch {
+            revealRefresh();
+        }
     };
 
     const refreshVisibleContent = async () => {
@@ -176,11 +216,42 @@ if (key && refreshButton instanceof HTMLButtonElement) {
         }
     };
 
-    echo.channel('sourcefolk.feed').listen('.community.activity', refreshVisibleContent);
+    const postInteractionTypes = new Set([
+        'comment.created',
+        'comment.deleted',
+        'reaction.created',
+        'reaction.deleted',
+        'repost.created',
+        'repost.deleted',
+    ]);
+    const realtimeFeed = document.querySelector('[data-realtime-feed]');
+
+    if (realtimeFeed instanceof HTMLElement) {
+        echo.channel('sourcefolk.feed').listen('.community.activity', (activity) => {
+            if (postInteractionTypes.has(activity.type) && activity.post_id) {
+                void refreshPostInteractions(activity.post_id);
+
+                return;
+            }
+
+            void refreshVisibleContent();
+        });
+    }
 
     const postId = refreshButton.dataset.postId;
     if (postId) {
-        echo.channel(`sourcefolk.posts.${postId}`).listen('.community.activity', refreshVisibleContent);
+        echo.channel(`sourcefolk.posts.${postId}`).listen('.community.activity', (activity) => {
+            if (activity.type === 'reaction.created'
+                || activity.type === 'reaction.deleted'
+                || activity.type === 'repost.created'
+                || activity.type === 'repost.deleted') {
+                void refreshPostInteractions(activity.post_id);
+
+                return;
+            }
+
+            void refreshVisibleContent();
+        });
     }
 
     const profileId = refreshButton.dataset.profileId;
