@@ -6,6 +6,7 @@ use App\PostKind;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class StorePostRequest extends FormRequest
 {
@@ -27,9 +28,15 @@ class StorePostRequest extends FormRequest
         return [
             'kind' => ['required', Rule::enum(PostKind::class)],
             'title' => ['nullable', 'string', 'max:180', 'required_unless:kind,note'],
-            'body' => ['nullable', 'string', 'max:1500', 'required_without:url'],
+            'body' => ['nullable', 'string', 'max:1500', 'required_without_all:url,attachments'],
             'url' => ['nullable', 'url:http,https', 'max:2048'],
             'tags' => ['nullable', 'string', 'max:240'],
+            'attachments' => ['nullable', 'array', 'max:4'],
+            'attachments.*' => [
+                'file',
+                File::types(['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'webm'])
+                    ->max('100mb'),
+            ],
         ];
     }
 }

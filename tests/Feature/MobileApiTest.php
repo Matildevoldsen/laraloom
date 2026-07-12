@@ -6,6 +6,8 @@ use App\Models\User;
 use App\PostStatus;
 use App\ProjectStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
@@ -155,6 +157,24 @@ test('a mobile user can publish a community post', function () {
         'user_id' => $user->id,
         'body' => 'I shipped a NativePHP app today.',
     ]);
+});
+
+test('a mobile user can upload media with a community post', function () {
+    Storage::fake('r2');
+    $user = User::factory()->create();
+    Sanctum::actingAs($user, ['mobile']);
+
+    $this->post('/api/v1/posts', [
+        'kind' => 'note',
+        'body' => 'A photo from the native app.',
+        'attachments' => [UploadedFile::fake()->image('nativephp.jpg')],
+    ], ['Accept' => 'application/json'])
+        ->assertCreated()
+        ->assertJsonPath('data.attachments.0.type', 'image')
+        ->assertJsonPath('data.attachments.0.mime_type', 'image/jpeg');
+
+    $attachment = Post::query()->with('attachments')->sole()->attachments->sole();
+    Storage::disk('r2')->assertExists($attachment->path);
 });
 
 test('a mobile member can list edit and delete only their own posts', function () {

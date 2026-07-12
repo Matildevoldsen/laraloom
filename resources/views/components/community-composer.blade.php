@@ -7,7 +7,8 @@
         <form
             method="POST"
             action="{{ route('posts.store') }}"
-            x-data="{ body: @js(old('body', '')), showDetails: {{ $errors->hasAny(['kind', 'title', 'url', 'tags']) || old('kind', 'note') !== 'note' ? 'true' : 'false' }} }"
+            enctype="multipart/form-data"
+            x-data="{ body: @js(old('body', '')), attachments: [], showDetails: {{ $errors->hasAny(['kind', 'title', 'url', 'tags', 'attachments']) || old('kind', 'note') !== 'note' ? 'true' : 'false' }} }"
         >
             <div class="absolute right-3 top-3 z-10">
                 <flux:modal.close>
@@ -55,10 +56,17 @@
             </div>
 
             <div class="flex items-center justify-between gap-3 border-t border-zinc-200/80 px-5 py-3 dark:border-white/8 sm:px-6">
-                <flux:button type="button" variant="ghost" size="sm" icon="plus" class="rounded-full!" x-on:click="showDetails = ! showDetails">
-                    <span x-text="showDetails ? 'Hide details' : 'Add details'">Add details</span>
-                </flux:button>
-                <flux:button type="submit" variant="primary" icon="paper-airplane" x-bind:disabled="! body.trim()" class="rounded-full! bg-[#ff4d73]! px-5! hover:bg-[#ff6382]! disabled:bg-zinc-300! disabled:text-zinc-500! dark:disabled:bg-white/10! dark:disabled:text-zinc-500!">Post</flux:button>
+                <div class="flex min-w-0 items-center gap-1">
+                    <label class="inline-flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/10 dark:hover:text-white">
+                        <flux:icon name="photo" class="size-5" />
+                        <span class="hidden sm:inline" x-text="attachments.length ? `${attachments.length} selected` : 'Media'">Media</span>
+                        <input type="file" name="attachments[]" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" multiple class="sr-only" x-on:change="attachments = Array.from($event.target.files)" />
+                    </label>
+                    <flux:button type="button" variant="ghost" size="sm" icon="plus" class="rounded-full!" x-on:click="showDetails = ! showDetails">
+                        <span x-text="showDetails ? 'Hide details' : 'Details'">Details</span>
+                    </flux:button>
+                </div>
+                <flux:button type="submit" variant="primary" icon="paper-airplane" x-bind:disabled="! body.trim() && attachments.length === 0" class="rounded-full! bg-[#ff4d73]! px-5! hover:bg-[#ff6382]! disabled:bg-zinc-300! disabled:text-zinc-500! dark:disabled:bg-white/10! dark:disabled:text-zinc-500!">Post</flux:button>
             </div>
         </form>
     </flux:modal>

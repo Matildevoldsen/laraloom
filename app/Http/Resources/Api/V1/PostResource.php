@@ -33,6 +33,12 @@ class PostResource extends JsonResource
                 'author' => $this->source_author,
             ],
             'tags' => $this->tags ?? [],
+            'attachments' => $this->whenLoaded('attachments', fn () => $this->attachments->map(fn ($attachment): array => [
+                'id' => $attachment->getKey(),
+                'type' => $attachment->media_type,
+                'mime_type' => $attachment->mime_type,
+                'url' => route('post-attachments.show', $attachment),
+            ])->values()),
             'is_ai_curated' => $this->is_ai_curated,
             'published_at' => $this->published_at?->toIso8601String(),
             'author' => UserResource::make($this->whenLoaded('user')),

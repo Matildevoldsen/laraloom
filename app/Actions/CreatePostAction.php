@@ -10,15 +10,20 @@ use Illuminate\Support\Str;
 
 class CreatePostAction
 {
-    public function __construct(private readonly PostInputNormalizer $normalizer) {}
+    public function __construct(
+        private readonly PostInputNormalizer $normalizer,
+        private readonly StorePostAttachmentsAction $storeAttachments,
+    ) {}
 
     /** @param array<string, mixed> $attributes */
     public function execute(User $user, array $attributes): Post
     {
+        $files = $attributes['attachments'] ?? [];
+        unset($attributes['attachments']);
         $input = $this->normalizer->normalize($attributes);
         $title = $input['title'];
 
-        return Post::create([
+        $post = Post::create([
             'user_id' => $user->id,
             ...$input,
             'status' => PostStatus::Published,
@@ -26,5 +31,9 @@ class CreatePostAction
             'is_ai_curated' => false,
             'published_at' => now(),
         ]);
+
+        $this->storeAttachments->execute($post, $files);
+
+        return $post;
     }
 }

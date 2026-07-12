@@ -8,6 +8,8 @@ use App\Models\User;
 use App\PostKind;
 use App\ProjectKind;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CommunityPublishingTest extends TestCase
@@ -50,6 +52,43 @@ class CommunityPublishingTest extends TestCase
         $project = Project::query()->sole();
         $response->assertRedirect(route('projects.show', $project));
         $this->assertTrue($project->is_open_source);
+    }
+
+    public function test_member_can_publish_a_post_with_photo_and_video_attachments(): void
+    {
+        Storage::fake('r2');
+        $member = User::factory()->create();
+
+        $this->actingAs($member)->post(route('posts.store'), [
+            'kind' => PostKind::Note->value,
+            'body' => 'A media update from the Laravel community.',
+            'attachments' => [
+                UploadedFile::fake()->image('cloud-launch.jpg', 1200, 800),
+                UploadedFile::fake()->create('demo.mp4', 2048, 'video/mp4'),
+            ],
+        ])->assertRedirect(route('home'));
+
+        $post = Post::query()->with('attachments')->sole();
+
+        $this->assertCount(2, $post->attachments);
+        $this->assertSame(['image', 'video'], $post->attachments->pluck('media_type')->all());
+        foreach ($post->attachments as $attachment) {
+            Storage::disk('r2')->assertExists($attachment->path);
+        }
+    }
+
+    public function test_post_attachment_rejects_unsupported_files(): void
+    {
+        Storage::fake('r2');
+        $member = User::factory()->create();
+
+        $this->actingAs($member)->post(route('posts.store'), [
+            'kind' => PostKind::Note->value,
+            'attachments' => [UploadedFile::fake()->create('payload.php', 5, 'application/x-php')],
+        ])->assertSessionHasErrors('attachments.0');
+
+        $this->assertDatabaseCount('posts', 0);
+        Storage::disk('r2')->assertDirectoryEmpty('/');
     }
 
     public function test_project_rejects_a_fake_laravel_cloud_hostname(): void

@@ -22,7 +22,7 @@ class FeedController extends Controller
 
         $posts = Post::query()
             ->published()
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->when($user instanceof User, fn (Builder $query): Builder => $query->withExists([
                 'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($user->id),

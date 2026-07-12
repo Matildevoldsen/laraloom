@@ -8,6 +8,7 @@ use App\Http\Controllers\ContentRequestController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\PostAttachmentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -22,6 +23,7 @@ Route::get('/projects', [ProjectController::class, 'index'])->name('projects.ind
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 Route::get('/@{user:username}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::get('/posts/{post}', [PostController::class, 'show'])->whereNumber('post')->name('posts.show');
+Route::get('/media/{attachment}', PostAttachmentController::class)->name('post-attachments.show');
 
 Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/content-policy', [LegalController::class, 'contentPolicy'])->name('legal.content-policy');

@@ -26,7 +26,7 @@ class ProfileController extends Controller
             ->load([
                 'posts' => fn (HasMany $query): HasMany => $query
                     ->where('status', PostStatus::Published)
-                    ->with('user')
+                    ->with(['user', 'attachments'])
                     ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
                     ->latest('published_at')
                     ->limit(20),
@@ -42,13 +42,13 @@ class ProfileController extends Controller
                     ->limit(20),
                 'reactedPosts' => fn (BelongsToMany $query): BelongsToMany => $query
                     ->where('status', PostStatus::Published)
-                    ->with('user')
+                    ->with(['user', 'attachments'])
                     ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
                     ->latest('reactions.created_at')
                     ->limit(20),
                 'repostedPosts' => fn (BelongsToMany $query): BelongsToMany => $query
                     ->where('status', PostStatus::Published)
-                    ->with('user')
+                    ->with(['user', 'attachments'])
                     ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
                     ->latest('reposts.created_at')
                     ->limit(20),

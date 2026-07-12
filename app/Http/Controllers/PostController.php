@@ -17,7 +17,7 @@ class PostController extends Controller
     public function show(Post $post): View
     {
         abort_unless($post->published_at?->isPast(), 404);
-        $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
+        $post->load(['user', 'attachments'])->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
         $comments = $post->comments()
             ->whereNull('parent_id')
             ->with(['user', 'replies.user'])

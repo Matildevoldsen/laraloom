@@ -19,7 +19,7 @@ class MyPostController extends Controller
 
         $posts = Post::query()
             ->whereBelongsTo($user)
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withExists([
                 'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($user->id),

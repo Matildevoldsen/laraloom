@@ -20,7 +20,7 @@ class FeedController extends Controller
 
         $posts = Post::query()
             ->published()
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->when($search !== '', function (Builder $query) use ($search): void {
                 $query->where(function (Builder $query) use ($search): void {

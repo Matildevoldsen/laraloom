@@ -76,6 +76,19 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    /** @return HasMany<PostAttachment, $this> */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(PostAttachment::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Post $post): void {
+            $post->attachments()->each(fn (PostAttachment $attachment) => $attachment->delete());
+        });
+    }
+
     /** @param Builder<Post> $query */
     public function scopePublished(Builder $query): void
     {

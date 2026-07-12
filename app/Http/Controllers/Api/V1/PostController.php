@@ -63,7 +63,7 @@ class PostController extends Controller
 
     private function prepare(Post $post, ?User $user): Post
     {
-        $post->load('user')->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
+        $post->load(['user', 'attachments'])->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments']);
 
         if ($user instanceof User) {
             $post->loadExists([

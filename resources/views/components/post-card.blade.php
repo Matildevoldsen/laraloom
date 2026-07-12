@@ -49,6 +49,18 @@
             @endif
         </a>
 
+        @if ($post->relationLoaded('attachments') && $post->attachments->isNotEmpty())
+            <div @class(['mt-4 grid overflow-hidden rounded-2xl border border-white/8 bg-black/20', 'grid-cols-2' => $post->attachments->count() > 1])>
+                @foreach ($post->attachments as $attachment)
+                    @if ($attachment->media_type === 'video')
+                        <video controls playsinline preload="metadata" class="max-h-[34rem] w-full bg-black object-contain" src="{{ route('post-attachments.show', $attachment) }}"></video>
+                    @else
+                        <img loading="lazy" class="max-h-[34rem] h-full w-full object-cover" src="{{ route('post-attachments.show', $attachment) }}" alt="Photo attached by {{ $post->user?->name ?? 'the author' }}" />
+                    @endif
+                @endforeach
+            </div>
+        @endif
+
         @if ($post->tags)
             <div class="mt-4 flex flex-wrap gap-2">
                 @foreach (array_slice($post->tags, 0, $compact ? 3 : 8) as $tag)<flux:badge size="sm" color="pink" inset="top bottom">{{ $tag }}</flux:badge>@endforeach

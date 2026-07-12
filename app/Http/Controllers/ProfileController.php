@@ -23,6 +23,7 @@ class ProfileController extends Controller
 
         $posts = $user->posts()
             ->where('status', PostStatus::Published)
+            ->with('attachments')
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->latest('published_at')
             ->limit(12)
@@ -36,14 +37,14 @@ class ProfileController extends Controller
         $replies = $user->comments()->with('post')->latest()->limit(20)->get();
         $likedPosts = $user->reactedPosts()
             ->where('status', PostStatus::Published)
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->latest('reactions.created_at')
             ->limit(20)
             ->get();
         $repostedPosts = $user->repostedPosts()
             ->where('status', PostStatus::Published)
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->latest('reposts.created_at')
             ->limit(20)

@@ -26,7 +26,7 @@ class FollowingFeedController extends Controller
                         $user->following()->select('users.id'),
                     ));
             })
-            ->with('user')
+            ->with(['user', 'attachments'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withExists([
                 'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($user->id),
