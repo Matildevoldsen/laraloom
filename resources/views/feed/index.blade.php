@@ -1,4 +1,4 @@
-@extends('layouts.community', ['title' => 'Today in Laravel'])
+@extends('layouts.community', ['title' => null])
 
 @section('content')
     <section class="mb-7 overflow-hidden rounded-2xl border border-[#ff4d73]/20 bg-gradient-to-br from-[#ff4d73]/10 via-white to-violet-500/8 p-6 dark:via-white/[.035] sm:p-8">

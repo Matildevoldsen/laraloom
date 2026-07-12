@@ -1,4 +1,8 @@
-@extends('layouts.community', ['title' => $project->name])
+@extends('layouts.community', [
+    'title' => $project->name,
+    'description' => $project->tagline ?: $project->description,
+    'socialImage' => $project->screenshot_url ?: null,
+])
 
 @section('content')
     <article>

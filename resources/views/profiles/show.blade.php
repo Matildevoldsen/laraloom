@@ -1,4 +1,7 @@
-@extends('layouts.community', ['title' => $user->name])
+@extends('layouts.community', [
+    'title' => $user->name.' (@'.$user->username.')',
+    'description' => $user->bio ?: ($user->headline ?: 'See '.$user->name.'\'s posts, packages, projects, and activity on Sourcefolk.'),
+])
 
 @section('content')
     <div data-realtime-profile>

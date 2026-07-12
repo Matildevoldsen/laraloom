@@ -2,7 +2,6 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
-        <meta name="description" content="The living front page of the Laravel community." />
     </head>
     <body class="min-h-screen bg-zinc-50 text-zinc-950 antialiased dark:bg-[#090b0f] dark:text-zinc-100">
         <div class="loom-glow" aria-hidden="true"></div>

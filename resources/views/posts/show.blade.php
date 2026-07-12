@@ -1,4 +1,7 @@
-@extends('layouts.community', ['title' => $post->title ?: 'Community post'])
+@extends('layouts.community', [
+    'title' => $post->title ?: 'Post by '.$post->user->name,
+    'description' => $post->why_it_matters ?: $post->body,
+])
 
 @section('content')
     <x-post-card :$post :compact="false" />
