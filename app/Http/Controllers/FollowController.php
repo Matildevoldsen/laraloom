@@ -14,8 +14,10 @@ class FollowController extends Controller
         $follower = $request->user();
         abort_unless($follower instanceof User, 401);
         abort_if($follower->is($user), 422, 'You cannot follow yourself.');
-        $toggleFollow->execute($follower, $user);
+        $isFollowing = $toggleFollow->execute($follower, $user);
 
-        return back();
+        return back()->with('status', $isFollowing
+            ? "You are now following {$user->name}."
+            : "You unfollowed {$user->name}.");
     }
 }

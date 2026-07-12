@@ -7,9 +7,15 @@
                 {{ str($post->user?->name ?? $post->source_name ?? 'L')->substr(0, 1)->upper() }}
             </a>
             <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-semibold text-zinc-200">{{ $post->user?->name ?? $post->source_name ?? 'Laraloom' }}</p>
+                @if ($post->user)
+                    <a href="{{ route('profiles.show', $post->user) }}" class="block truncate text-sm font-semibold text-zinc-200 hover:text-[#ff7693]">{{ $post->user->name }}</a>
+                    <a href="{{ route('profiles.show', $post->user) }}" class="mt-0.5 block truncate text-xs text-zinc-600 hover:text-zinc-300">{{ '@'.$post->user->username }} · {{ $post->published_at?->diffForHumans() }}</a>
+                @else
+                    <p class="truncate text-sm font-semibold text-zinc-200">{{ $post->source_name ?? 'Laraloom' }}</p>
+                @endif
                 <p class="mt-0.5 truncate text-xs text-zinc-600">
-                    {{ str($post->kind->value)->headline() }} · {{ $post->published_at?->diffForHumans() }}
+                    {{ str($post->kind->value)->headline() }}
+                    @unless ($post->user) · {{ $post->published_at?->diffForHumans() }} @endunless
                     @if ($post->is_ai_curated) · AI curated @endif
                 </p>
             </div>

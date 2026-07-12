@@ -16,6 +16,10 @@ class ProfileController extends Controller
     public function show(User $user): View
     {
         $user->loadCount(['followers', 'following', 'posts', 'projects']);
+        $user->setAttribute(
+            'is_following',
+            auth()->check() && auth()->user()->following()->whereKey($user->id)->exists(),
+        );
 
         $posts = $user->posts()
             ->where('status', PostStatus::Published)
@@ -27,8 +31,34 @@ class ProfileController extends Controller
             ->where('status', ProjectStatus::Published)
             ->latest('published_at')
             ->get();
+        $followers = $user->followers()->limit(12)->get();
+        $following = $user->following()->limit(12)->get();
+        $replies = $user->comments()->with('post')->latest()->limit(20)->get();
+        $likedPosts = $user->reactedPosts()
+            ->where('status', PostStatus::Published)
+            ->with('user')
+            ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->latest('reactions.created_at')
+            ->limit(20)
+            ->get();
+        $repostedPosts = $user->repostedPosts()
+            ->where('status', PostStatus::Published)
+            ->with('user')
+            ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
+            ->latest('reposts.created_at')
+            ->limit(20)
+            ->get();
 
-        return view('profiles.show', compact('posts', 'projects', 'user'));
+        return view('profiles.show', compact(
+            'followers',
+            'following',
+            'likedPosts',
+            'posts',
+            'projects',
+            'replies',
+            'repostedPosts',
+            'user',
+        ));
     }
 
     public function edit(User $user): View

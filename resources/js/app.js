@@ -4,6 +4,49 @@ import Pusher from 'pusher-js';
 const key = import.meta.env.VITE_PUSHER_APP_KEY;
 const refreshButton = document.querySelector('[data-realtime-refresh]');
 
+const initializeInfiniteFeed = () => {
+    const sentinel = document.querySelector('[data-infinite-feed]');
+
+    if (!(sentinel instanceof HTMLElement) || sentinel.dataset.loading === 'true') {
+        return;
+    }
+
+    const observer = new IntersectionObserver(async ([entry]) => {
+        if (!entry?.isIntersecting || sentinel.dataset.loading === 'true') {
+            return;
+        }
+
+        sentinel.dataset.loading = 'true';
+        const response = await fetch(sentinel.dataset.nextUrl, {
+            credentials: 'same-origin',
+            headers: { 'X-Laraloom-Infinite': 'true' },
+        });
+
+        if (!response.ok) {
+            sentinel.dataset.loading = 'false';
+
+            return;
+        }
+
+        const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const currentFeed = document.querySelector('[data-realtime-feed]');
+        const nextFeed = page.querySelector('[data-realtime-feed]');
+        const nextSentinel = page.querySelector('[data-infinite-feed]');
+
+        if (currentFeed instanceof HTMLElement && nextFeed instanceof HTMLElement) {
+            currentFeed.append(...nextFeed.children);
+        }
+
+        sentinel.replaceWith(nextSentinel ?? document.createComment('Feed complete'));
+        observer.disconnect();
+        initializeInfiniteFeed();
+    }, { rootMargin: '500px 0px' });
+
+    observer.observe(sentinel);
+};
+
+initializeInfiniteFeed();
+
 if (key && refreshButton instanceof HTMLButtonElement) {
     window.Pusher = Pusher;
 
@@ -65,6 +108,7 @@ if (key && refreshButton instanceof HTMLButtonElement) {
                 replaceFragment(document, '[data-realtime-post]'),
                 replaceFragment(document, '[data-realtime-conversation-summary]'),
                 replaceFragment(document, '[data-realtime-comments]'),
+                replaceFragment(document, '[data-realtime-profile]'),
             ].some(Boolean);
 
             if (!refreshed) {
@@ -87,6 +131,11 @@ if (key && refreshButton instanceof HTMLButtonElement) {
     const postId = refreshButton.dataset.postId;
     if (postId) {
         echo.channel(`laraloom.posts.${postId}`).listen('.community.activity', refreshVisibleContent);
+    }
+
+    const profileId = refreshButton.dataset.profileId;
+    if (profileId) {
+        echo.channel(`laraloom.profiles.${profileId}`).listen('.follow.changed', refreshVisibleContent);
     }
 
     refreshButton.addEventListener('click', () => window.location.reload());

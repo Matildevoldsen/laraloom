@@ -42,6 +42,7 @@
             type="button"
             data-realtime-refresh
             @if (request()->route('post') instanceof \App\Models\Post) data-post-id="{{ request()->route('post')->id }}" @endif
+            @if (request()->route('user') instanceof \App\Models\User) data-profile-id="{{ request()->route('user')->id }}" @endif
             class="pointer-events-none fixed left-1/2 top-20 z-40 flex -translate-x-1/2 translate-y-2 items-center gap-2 rounded-full border border-[#ff4d73]/25 bg-[#171218]/95 px-4 py-2 text-xs font-semibold text-[#ff9aaf] opacity-0 shadow-2xl shadow-black/40 backdrop-blur-xl transition duration-200 hover:border-[#ff4d73]/45 hover:text-white"
         >
             <span class="size-1.5 rounded-full bg-[#ff4d73] shadow-[0_0_10px_#ff4d73]"></span>

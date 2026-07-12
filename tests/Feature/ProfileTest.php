@@ -55,10 +55,14 @@ class ProfileTest extends TestCase
         $member = User::factory()->create();
         $maker = User::factory()->create();
 
-        $this->actingAs($member)->post(route('profiles.follow', $maker))->assertRedirect();
+        $this->actingAs($member)->post(route('profiles.follow', $maker))
+            ->assertRedirect()
+            ->assertSessionHas('status', "You are now following {$maker->name}.");
         $this->assertTrue($member->following()->whereKey($maker->id)->exists());
 
-        $this->actingAs($member)->post(route('profiles.follow', $maker))->assertRedirect();
+        $this->actingAs($member)->post(route('profiles.follow', $maker))
+            ->assertRedirect()
+            ->assertSessionHas('status', "You unfollowed {$maker->name}.");
         $this->assertFalse($member->following()->whereKey($maker->id)->exists());
     }
 }

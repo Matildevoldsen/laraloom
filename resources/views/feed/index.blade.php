@@ -27,7 +27,11 @@
             <div class="loom-empty"><span>✦</span><h2>No threads here yet</h2><p>Be the first to add something worth knowing.</p>@auth<a class="loom-button mt-4" href="{{ route('posts.create') }}">Share with Laravel</a>@endauth</div>
         @endforelse
     </div>
-    <div class="mt-6">{{ $posts->links() }}</div>
+    @if ($posts->nextPageUrl())
+        <div class="mt-6 flex justify-center" data-infinite-feed data-next-url="{{ $posts->nextPageUrl() }}">
+            <button type="button" class="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-500">Loading more…</button>
+        </div>
+    @endif
 @endsection
 
 @section('rail')

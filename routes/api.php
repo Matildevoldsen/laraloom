@@ -25,6 +25,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::get('/posts/{post}/comments', [CommentController::class, 'index'])->name('posts.comments.index');
     Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
     Route::get('/profiles/{user:username}', ProfileController::class)->name('profiles.show');
+    Route::get('/profiles/id/{user}', ProfileController::class)->name('profiles.show_by_id');
     Route::post('/auth/token', [AuthTokenController::class, 'store'])
         ->middleware('throttle:10,1')
         ->name('auth.store');

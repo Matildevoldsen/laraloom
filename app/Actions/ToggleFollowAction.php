@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Events\FollowChanged;
 use App\Models\Follow;
 use App\Models\User;
 use InvalidArgumentException;
@@ -21,6 +22,7 @@ class ToggleFollowAction
 
         if ($follow) {
             $follow->delete();
+            FollowChanged::dispatch($follower->id, $following->id, false);
 
             return false;
         }
@@ -29,6 +31,7 @@ class ToggleFollowAction
             'follower_id' => $follower->id,
             'following_id' => $following->id,
         ]);
+        FollowChanged::dispatch($follower->id, $following->id, true);
 
         return true;
     }
