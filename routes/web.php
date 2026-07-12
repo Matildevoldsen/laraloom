@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserDeletionController as AdminUserDeletionController;
 use App\Http\Controllers\Admin\UserVerificationController as AdminUserVerificationController;
+use App\Http\Controllers\AllNotificationsReadController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentRequestController;
@@ -17,6 +18,8 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GitHubAuthenticationController;
 use App\Http\Controllers\LegalAcceptanceController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationReadController;
 use App\Http\Controllers\PostAttachmentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -64,6 +67,12 @@ Route::middleware('auth')->group(function (): void {
 });
 
 Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/read', AllNotificationsReadController::class)->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', NotificationReadController::class)
+        ->whereUuid('notification')
+        ->name('notifications.read');
+
     Route::prefix('messages')->name('direct-messages.')->group(function (): void {
         Route::get('/', [DirectConversationController::class, 'index'])->name('index');
         Route::post('/with/{recipient:username}', [DirectConversationController::class, 'store'])

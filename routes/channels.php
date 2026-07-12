@@ -1,6 +1,7 @@
 <?php
 
 use App\Broadcasting\UserMessagesChannel;
+use App\Broadcasting\UserNotificationsChannel;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -12,5 +13,11 @@ Broadcast::channel(
 Broadcast::channel(
     'sourcefolk.users.{user}.messages',
     UserMessagesChannel::class,
+    ['guards' => ['web', 'sanctum']],
+);
+
+Broadcast::channel(
+    'sourcefolk.users.{user}.notifications',
+    UserNotificationsChannel::class,
     ['guards' => ['web', 'sanctum']],
 );

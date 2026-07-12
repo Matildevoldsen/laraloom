@@ -27,6 +27,7 @@
                         <svg x-show="$flux.dark" x-cloak class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.6 15.5A8.5 8.5 0 0 1 8.5 3.4 8.5 8.5 0 1 0 20.6 15.5Z"/></svg>
                     </button>
                     @auth
+                        <livewire:notification-indicator />
                         <flux:modal.trigger name="community-composer">
                             <flux:button variant="primary" icon="pencil-square" class="hidden rounded-full! bg-[#ff4d73]! hover:bg-[#ff6382]! sm:inline-flex">Post</flux:button>
                         </flux:modal.trigger>
@@ -70,6 +71,9 @@
                     <div class="my-5 border-t border-zinc-200 dark:border-white/8"></div>
                     @auth
                         <a href="{{ route('projects.create') }}" class="side-link">＋ <span>Submit a project</span></a>
+                        <a href="{{ route('notifications.index') }}" @class(['side-link', 'is-active' => request()->routeIs('notifications.*')])>
+                            ◌ <span>Notifications</span>
+                        </a>
                         <a href="{{ route('direct-messages.index') }}" @class(['side-link', 'is-active' => request()->routeIs('direct-messages.*')])>✉ <span>Messages</span></a>
                         <a href="{{ route('profiles.edit', auth()->user()) }}" class="side-link">↗ <span>Edit profile</span></a>
                         @can('access-admin')

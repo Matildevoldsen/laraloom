@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Comment;
+use App\Models\Follow;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\Repost;
 use App\Models\User;
 use App\Observers\CommunityActivityObserver;
+use App\Observers\CommunityNotificationObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -39,6 +41,10 @@ class AppServiceProvider extends ServiceProvider
         Comment::observe(CommunityActivityObserver::class);
         Reaction::observe(CommunityActivityObserver::class);
         Repost::observe(CommunityActivityObserver::class);
+        Follow::observe(CommunityNotificationObserver::class);
+        Comment::observe(CommunityNotificationObserver::class);
+        Reaction::observe(CommunityNotificationObserver::class);
+        Repost::observe(CommunityNotificationObserver::class);
 
         $this->configureDefaults();
     }
