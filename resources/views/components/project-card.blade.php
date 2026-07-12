@@ -10,7 +10,7 @@
             <p class="mt-1 line-clamp-2 text-sm leading-5 text-zinc-400">{{ $project->tagline }}</p>
         </div>
     </div>
-    <div class="mt-5 flex flex-wrap gap-2">@foreach (($project->tags ?? []) as $tag)<span class="loom-tag">{{ $tag }}</span>@endforeach</div>
+    <div class="mt-5 flex flex-wrap gap-2">@foreach (($project->tags ?? []) as $tag)<flux:badge size="sm" color="violet" inset="top bottom">{{ $tag }}</flux:badge>@endforeach</div>
     <div class="mt-auto flex items-center justify-between pt-5 text-xs text-zinc-600">
         <a href="{{ route('profiles.show', $project->user) }}" class="hover:text-zinc-300">by {{ $project->user->name }}</a>
         <span class="capitalize">{{ $project->kind->value }}</span>

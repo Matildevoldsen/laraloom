@@ -30,7 +30,7 @@
                     <flux:modal.trigger name="profile-following"><button><b class="font-medium text-zinc-200">{{ $user->following_count }}</b> following</button></flux:modal.trigger>
                     @if ($user->is_available_for_work)<span class="text-emerald-400">● Available for work</span>@endif
                 </div>
-                @if ($user->stack)<div class="mt-4 flex flex-wrap gap-2">@foreach ($user->stack as $item)<span class="loom-tag">{{ $item }}</span>@endforeach</div>@endif
+                @if ($user->stack)<div class="mt-4 flex flex-wrap gap-2">@foreach ($user->stack as $item)<flux:badge size="sm" color="violet" inset="top bottom">{{ $item }}</flux:badge>@endforeach</div>@endif
             </div>
         </section>
 

@@ -51,7 +51,7 @@
 
         @if ($post->tags)
             <div class="mt-4 flex flex-wrap gap-2">
-                @foreach (array_slice($post->tags, 0, $compact ? 3 : 8) as $tag)<span class="loom-tag">{{ $tag }}</span>@endforeach
+                @foreach (array_slice($post->tags, 0, $compact ? 3 : 8) as $tag)<flux:badge size="sm" color="pink" inset="top bottom">{{ $tag }}</flux:badge>@endforeach
             </div>
         @endif
 
