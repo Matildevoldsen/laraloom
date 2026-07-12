@@ -46,7 +46,7 @@ test('an admin can review and moderate posts on the web', function () {
     $this->actingAs($admin)
         ->get('/admin')
         ->assertOk()
-        ->assertSee('Laraloom admin')
+        ->assertSee('Sourcefolk admin')
         ->assertSee('Review this submission');
 
     $this->actingAs($admin)

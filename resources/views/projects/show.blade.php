@@ -13,5 +13,5 @@
 @endsection
 
 @section('rail')
-    <div class="rail-card sticky top-24"><p class="text-xs uppercase tracking-[.16em] text-zinc-500 dark:text-zinc-600">Maker</p><a href="{{ route('profiles.show', $project->user) }}" class="mt-4 flex items-center gap-3"><img class="loom-avatar" src="{{ $project->user->avatarUrl() }}" alt="" /><span><span class="block text-sm text-zinc-800 dark:text-zinc-200">{{ $project->user->name }}</span><span class="block text-xs text-zinc-500 dark:text-zinc-600">{{ '@'.$project->user->username }}</span></span></a><p class="mt-4 text-xs leading-5 text-zinc-500 dark:text-zinc-600">Published {{ $project->published_at?->format('j M Y') }}</p></div>
+    <div class="rail-card sticky top-24"><p class="text-xs uppercase tracking-[.16em] text-zinc-500 dark:text-zinc-600">Maker</p><a href="{{ route('profiles.show', $project->user) }}" class="mt-4 flex items-center gap-3"><x-user-avatar :user="$project->user" /><span><span class="flex items-center gap-1.5 text-sm text-zinc-800 dark:text-zinc-200">{{ $project->user->name }} <x-verified-badge :user="$project->user" /></span><span class="block text-xs text-zinc-500 dark:text-zinc-600">{{ '@'.$project->user->username }}</span></span></a><p class="mt-4 text-xs leading-5 text-zinc-500 dark:text-zinc-600">Published {{ $project->published_at?->format('j M Y') }}</p></div>
 @endsection

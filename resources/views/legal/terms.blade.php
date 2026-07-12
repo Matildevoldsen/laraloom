@@ -19,15 +19,18 @@
                 <p class="text-sm leading-7 text-zinc-600 dark:text-zinc-400">
                     These Terms are an agreement between you and
                     <strong class="font-semibold text-zinc-800 dark:text-zinc-200">{{ $legal['operator']['name'] ?: 'the legal operator named in the deployment notice above' }}</strong>.
-                    You agree to these Terms by selecting “I have read and agree” and continuing. Laraloom records the Terms version, acceptance time, and the minimum-age threshold presented. Materially revised Terms must be reviewed and accepted before member features can be used again. A privacy notice explains data use and is not a request for blanket consent; see our
+                    You agree to these Terms by selecting “I have read and agree” and continuing. Sourcefolk records the Terms version, acceptance time, and the minimum-age threshold presented. Materially revised Terms must be reviewed and accepted before member features can be used again. A privacy notice explains data use and is not a request for blanket consent; see our
                     <a class="font-medium text-rose-600 hover:underline dark:text-[#ff7693]" href="{{ route('legal.privacy') }}">Privacy Policy</a>.
+                </p>
+                <p class="text-sm leading-7 text-zinc-600 dark:text-zinc-400">
+                    Sourcefolk is an independent community service. It is not affiliated with, sponsored by, or endorsed by Laravel Holdings Inc. Laravel is a trademark of Laravel Holdings Inc. References to Laravel describe the ecosystem the community discusses and do not claim any official relationship.
                 </p>
             </section>
 
             <section class="space-y-3">
                 <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-100">2. Eligibility and accounts</h2>
                 <p class="text-sm leading-7 text-zinc-600 dark:text-zinc-400">
-                    You must be at least {{ $legal['minimum_age'] }} years old and legally capable of entering this agreement. Laraloom does not permit accounts for anyone under {{ $legal['minimum_age'] }}, including with parent or guardian permission. The current age control is a self-declaration, not verified age assurance, and does not collect your date of birth.
+                    You must be at least {{ $legal['minimum_age'] }} years old and legally capable of entering this agreement. Sourcefolk does not permit accounts for anyone under {{ $legal['minimum_age'] }}, including with parent or guardian permission. The current age control is a self-declaration, not verified age assurance, and does not collect your date of birth.
                 </p>
                 <p class="text-sm leading-7 text-zinc-600 dark:text-zinc-400">
                     GitHub is the primary sign-in provider. You must keep your GitHub account secure and provide accurate account information. We do not receive your GitHub password. You are responsible for activity under your account until you tell us it has been compromised.

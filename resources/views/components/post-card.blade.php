@@ -8,10 +8,10 @@
             </a>
             <div class="min-w-0 flex-1">
                 @if ($post->user)
-                    <a href="{{ route('profiles.show', $post->user) }}" class="block truncate text-sm font-semibold text-zinc-800 hover:text-[#d92855] dark:text-zinc-200 dark:hover:text-[#ff7693]">{{ $post->user->name }}</a>
+                    <a href="{{ route('profiles.show', $post->user) }}" class="flex items-center gap-1.5 truncate text-sm font-semibold text-zinc-800 hover:text-[#d92855] dark:text-zinc-200 dark:hover:text-[#ff7693]">{{ $post->user->name }} <x-verified-badge :user="$post->user" /></a>
                     <a href="{{ route('profiles.show', $post->user) }}" class="mt-0.5 block truncate text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-600 dark:hover:text-zinc-300">{{ '@'.$post->user->username }} · {{ $post->published_at?->diffForHumans() }}</a>
                 @else
-                    <p class="truncate text-sm font-semibold text-zinc-800 dark:text-zinc-200">{{ $post->source_name ?? 'Laraloom' }}</p>
+                    <p class="truncate text-sm font-semibold text-zinc-800 dark:text-zinc-200">{{ $post->source_name ?? 'Sourcefolk' }}</p>
                 @endif
                 <p class="mt-0.5 truncate text-xs text-zinc-600">
                     {{ str($post->kind->value)->headline() }}

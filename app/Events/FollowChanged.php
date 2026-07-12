@@ -20,7 +20,7 @@ class FollowChanged implements ShouldBroadcastNow
     /** @return array<int, Channel> */
     public function broadcastOn(): array
     {
-        return [new Channel("laraloom.profiles.{$this->followingId}")];
+        return [new Channel("sourcefolk.profiles.{$this->followingId}")];
     }
 
     public function broadcastAs(): string

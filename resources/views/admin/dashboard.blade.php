@@ -4,10 +4,13 @@
     <div class="mb-7 flex items-end justify-between gap-4">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#ff7693]">Community operations</p>
-            <h1 class="mt-2 text-3xl font-semibold tracking-[-.04em]">Laraloom admin</h1>
+            <h1 class="mt-2 text-3xl font-semibold tracking-[-.04em]">Sourcefolk admin</h1>
             <p class="mt-2 text-sm text-zinc-500">Moderate submissions without losing attribution or context.</p>
         </div>
-        <span class="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-700 dark:text-emerald-300">Protected</span>
+        <div class="flex items-center gap-2">
+            <a class="rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium hover:border-zinc-500 dark:border-white/10 dark:hover:border-white/25" href="{{ route('admin.users.index') }}">Verify members</a>
+            <span class="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-700 dark:text-emerald-300">Protected</span>
+        </div>
     </div>
 
     <div class="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-5">

@@ -2,18 +2,26 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 uses(RefreshDatabase::class);
 
-test('GitHub is the primary action on the authentication screens', function () {
-    foreach (['login', 'register'] as $routeName) {
-        $this->get(route($routeName))
-            ->assertOk()
-            ->assertSeeInOrder(['Continue with GitHub', 'Email address'])
-            ->assertSee(route('auth.github.redirect'), escape: false);
-    }
+test('GitHub is the only authentication action on the web', function () {
+    $this->get(route('login'))
+        ->assertOk()
+        ->assertSee('Continue with GitHub')
+        ->assertSee(route('auth.github.redirect'), escape: false)
+        ->assertDontSee('Email address')
+        ->assertDontSee('Password')
+        ->assertDontSee('passkey');
+
+    $this->get(route('register'))->assertRedirect(route('login'));
+
+    expect(Route::has('register.store'))->toBeFalse()
+        ->and(Route::has('password.request'))->toBeFalse()
+        ->and(Route::has('passkey.login'))->toBeFalse();
 });
 
 test('a guest can start GitHub authentication', function () {
@@ -45,6 +53,7 @@ test('a new user can create an account with GitHub', function () {
         ->github_username->toBe('octocat')
         ->avatar_url->toBe('https://avatars.githubusercontent.com/u/123')
         ->email_verified_at->not->toBeNull()
+        ->onboarding_completed_at->toBeNull()
         ->and(array_key_exists('github_token', $user->getAttributes()))->toBeFalse()
         ->and(array_key_exists('github_refresh_token', $user->getAttributes()))->toBeFalse();
 });

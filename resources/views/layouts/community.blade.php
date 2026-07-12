@@ -9,14 +9,14 @@
 
         <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-xl dark:border-white/8 dark:bg-[#090b0f]/85">
             <div class="mx-auto flex h-16 max-w-[1480px] items-center gap-6 px-4 sm:px-6">
-                <a href="{{ route('home') }}" class="group flex items-center gap-3" aria-label="Laraloom home">
+                <a href="{{ route('home') }}" class="group flex items-center gap-3" aria-label="Sourcefolk home">
                     <span class="loom-mark"><i></i><i></i><i></i></span>
-                    <span class="text-lg font-semibold tracking-[-0.04em]">Laraloom</span>
+                    <span class="text-lg font-semibold tracking-[-0.04em]">Sourcefolk</span>
                 </a>
 
                 <form action="{{ route('home') }}" class="mx-auto hidden w-full max-w-xl md:block">
                     <label class="relative block">
-                        <span class="sr-only">Search Laraloom</span>
+                        <span class="sr-only">Search Sourcefolk</span>
                         <svg class="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                         <input name="q" value="{{ request('q') }}" class="h-10 w-full rounded-full border border-zinc-200 bg-zinc-100/80 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-500 focus:border-[#ff4d73]/60 focus:bg-white focus:outline-none dark:border-white/10 dark:bg-white/[.045] dark:text-white dark:placeholder:text-zinc-600 dark:focus:bg-white/[.06]" placeholder="Search news, packages, people…" />
                     </label>
@@ -55,7 +55,11 @@
             New activity · refresh
         </button>
 
-        <div class="mx-auto grid max-w-[1480px] grid-cols-1 gap-6 px-4 py-7 sm:px-6 lg:grid-cols-[190px_minmax(0,1fr)] xl:grid-cols-[190px_minmax(0,1fr)_270px]">
+        <div @class([
+            'mx-auto grid max-w-[1480px] grid-cols-1 gap-6 px-4 py-7 sm:px-6 lg:grid-cols-[190px_minmax(0,1fr)]',
+            'xl:grid-cols-[190px_minmax(0,1fr)]' => $wideMain ?? false,
+            'xl:grid-cols-[190px_minmax(0,1fr)_270px]' => ! ($wideMain ?? false),
+        ])>
             <aside class="hidden lg:block">
                 <nav class="sticky top-24 space-y-1 text-sm">
                     <p class="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[.18em] text-zinc-600">Explore</p>
@@ -79,11 +83,13 @@
 
             <main class="min-w-0">@yield('content'){{ $slot ?? '' }}</main>
 
-            <aside class="hidden xl:block">@yield('rail')</aside>
+            @unless ($wideMain ?? false)
+                <aside class="hidden xl:block">@yield('rail')</aside>
+            @endunless
         </div>
 
         <footer class="border-t border-zinc-200 px-4 py-8 text-center text-xs text-zinc-500 dark:border-white/8 dark:text-zinc-600">
-            Built in public for the Laravel community · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.content-policy') }}">Content policy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.privacy') }}">Privacy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.terms') }}">Terms</a>
+            Independent and not affiliated with Laravel Holdings Inc. · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.content-policy') }}">Content policy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.privacy') }}">Privacy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.terms') }}">Terms</a>
         </footer>
         <x-community-composer />
         @fluxScripts

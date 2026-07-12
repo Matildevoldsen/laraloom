@@ -18,7 +18,7 @@ class AuthenticationTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_password_authentication_is_rejected_in_favour_of_github(): void
     {
         $user = User::factory()->create();
 
@@ -27,14 +27,14 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('legal.acceptance.show', absolute: false));
+        $response->assertSessionHasErrors([
+            'email' => 'Password sign-in is not available. Continue with GitHub.',
+        ]);
 
-        $this->assertAuthenticated();
+        $this->assertGuest();
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function test_invalid_passwords_cannot_bypass_github_only_authentication(): void
     {
         $user = User::factory()->create();
 

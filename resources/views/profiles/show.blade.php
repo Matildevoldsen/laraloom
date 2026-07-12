@@ -27,7 +27,7 @@
                         @endauth
                     </div>
                 </div>
-                <h1 class="mt-4 text-2xl font-semibold tracking-[-.035em]">{{ $user->name }}</h1>
+                <h1 class="mt-4 flex items-center gap-2 text-2xl font-semibold tracking-[-.035em]">{{ $user->name }} <x-verified-badge :$user size="md" /></h1>
                 <p class="mt-0.5 text-sm text-zinc-500">{{ '@'.$user->username }}</p>
                 @if ($user->headline)<p class="mt-3 text-zinc-800 dark:text-zinc-300">{{ $user->headline }}</p>@endif
                 @if ($user->bio)<p class="mt-3 max-w-2xl whitespace-pre-line text-sm leading-6 text-zinc-600 dark:text-zinc-400">{{ $user->bio }}</p>@endif
@@ -62,7 +62,7 @@
 
         @foreach (['followers' => $followers, 'following' => $following] as $relationship => $people)
             <flux:modal name="profile-{{ $relationship }}" variant="flyout" position="right" class="md:w-[32rem]">
-                <div class="space-y-4"><flux:heading size="lg">{{ ucfirst($relationship) }}</flux:heading><div class="divide-y divide-zinc-200 dark:divide-white/8">@forelse ($people as $person)<a href="{{ route('profiles.show', $person) }}" class="flex items-center gap-3 py-4"><img class="size-11 rounded-full object-cover" src="{{ $person->avatarUrl() }}" alt="" /><div><p class="font-medium text-zinc-900 dark:text-zinc-100">{{ $person->name }}</p><p class="text-xs text-zinc-500">{{ '@'.$person->username }}</p></div></a>@empty<p class="py-8 text-center text-sm text-zinc-500">Nobody here yet.</p>@endforelse</div></div>
+                <div class="space-y-4"><flux:heading size="lg">{{ ucfirst($relationship) }}</flux:heading><div class="divide-y divide-zinc-200 dark:divide-white/8">@forelse ($people as $person)<a href="{{ route('profiles.show', $person) }}" class="flex items-center gap-3 py-4"><x-user-avatar :user="$person" size="size-11" /><div><p class="flex items-center gap-1.5 font-medium text-zinc-900 dark:text-zinc-100">{{ $person->name }} <x-verified-badge :user="$person" /></p><p class="text-xs text-zinc-500">{{ '@'.$person->username }}</p></div></a>@empty<p class="py-8 text-center text-sm text-zinc-500">Nobody here yet.</p>@endforelse</div></div>
             </flux:modal>
         @endforeach
     </div>

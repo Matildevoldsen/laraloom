@@ -2,8 +2,8 @@
 
 return [
     'effective_date' => env('LEGAL_EFFECTIVE_DATE', '12 July 2026'),
-    'terms_version' => env('LEGAL_TERMS_VERSION', '2026-07-12'),
-    'privacy_version' => env('LEGAL_PRIVACY_VERSION', '2026-07-12'),
+    'terms_version' => env('LEGAL_TERMS_VERSION', '2026-07-12-sourcefolk'),
+    'privacy_version' => env('LEGAL_PRIVACY_VERSION', '2026-07-12-sourcefolk'),
 
     'operator' => [
         'name' => env('LEGAL_OPERATOR_NAME'),

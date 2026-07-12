@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use App\Notifications\WelcomeToSourcefolk;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -26,11 +27,16 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'username' => strtolower($input['username']),
             'email' => $input['email'],
+            'onboarding_completed_at' => now(),
             'password' => $input['password'],
         ]);
+
+        $user->notify(new WelcomeToSourcefolk);
+
+        return $user;
     }
 }

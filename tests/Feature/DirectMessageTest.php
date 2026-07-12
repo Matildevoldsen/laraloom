@@ -59,8 +59,8 @@ test('message broadcasts contain identifiers but never plaintext', function () {
         ->and($payload)->not->toHaveKeys(['body', 'message'])
         ->and($channels)->each->toBeInstanceOf(PrivateChannel::class)
         ->and($channels->pluck('name')->sort()->values()->all())->toBe(collect([
-            "private-laraloom.users.{$sender->id}.messages",
-            "private-laraloom.users.{$recipient->id}.messages",
+            "private-sourcefolk.users.{$sender->id}.messages",
+            "private-sourcefolk.users.{$recipient->id}.messages",
         ])->sort()->values()->all());
 });
 

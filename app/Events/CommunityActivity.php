@@ -22,11 +22,11 @@ class CommunityActivity implements ShouldBroadcastNow
     /** @return array<int, Channel|PrivateChannel> */
     public function broadcastOn(): array
     {
-        $channels = [new PrivateChannel('laraloom.admin')];
+        $channels = [new PrivateChannel('sourcefolk.admin')];
 
         if ($this->isPublic) {
-            $channels[] = new Channel('laraloom.feed');
-            $channels[] = new Channel("laraloom.posts.{$this->postId}");
+            $channels[] = new Channel('sourcefolk.feed');
+            $channels[] = new Channel("sourcefolk.posts.{$this->postId}");
         }
 
         return $channels;

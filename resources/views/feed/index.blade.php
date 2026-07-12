@@ -46,9 +46,9 @@
                 @foreach ($people as $person)
                     <div class="flex items-center gap-3">
                         <a href="{{ route('profiles.show', $person) }}" class="group flex min-w-0 flex-1 items-center gap-3">
-                            <img class="loom-avatar" src="{{ $person->avatarUrl() }}" alt="" />
+                            <x-user-avatar :user="$person" />
                             <span class="min-w-0">
-                                <span class="block truncate text-sm font-medium text-zinc-800 group-hover:text-zinc-950 dark:text-zinc-200 dark:group-hover:text-white">{{ $person->name }}</span>
+                                <span class="flex items-center gap-1.5 truncate text-sm font-medium text-zinc-800 group-hover:text-zinc-950 dark:text-zinc-200 dark:group-hover:text-white">{{ $person->name }} <x-verified-badge :user="$person" /></span>
                                 <span class="block truncate text-xs text-zinc-500 dark:text-zinc-600">{{ '@'.$person->username }}</span>
                             </span>
                         </a>
@@ -62,6 +62,6 @@
                 @endforeach
             </div>
         </section>
-        <p class="px-2 text-[11px] leading-5 text-zinc-500 dark:text-zinc-700">Laraloom stores links, attribution, and short original summaries—not copied articles. Publishers can opt out at any time.</p>
+        <p class="px-2 text-[11px] leading-5 text-zinc-500 dark:text-zinc-700">Sourcefolk stores links, attribution, and short original summaries—not copied articles. Publishers can opt out at any time.</p>
     </div>
 @endsection

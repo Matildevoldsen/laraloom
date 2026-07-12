@@ -27,7 +27,7 @@ class DirectMessageCreated implements ShouldBroadcastNow, ShouldDispatchAfterCom
     public function broadcastOn(): array
     {
         return array_map(
-            fn (int $userId): PrivateChannel => new PrivateChannel("laraloom.users.{$userId}.messages"),
+            fn (int $userId): PrivateChannel => new PrivateChannel("sourcefolk.users.{$userId}.messages"),
             $this->recipientIds,
         );
     }

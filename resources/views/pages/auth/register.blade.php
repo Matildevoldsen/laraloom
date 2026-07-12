@@ -1,12 +1,12 @@
 <x-layouts::auth :title="__('Register')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Join Laraloom')" :description="__('GitHub is the quickest way to create your community profile.')" />
+        <x-auth-header :title="__('Join Sourcefolk')" :description="__('GitHub is the quickest way to create your community profile.')" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
         <div class="rounded-xl bg-zinc-100 px-4 py-3 text-sm leading-6 text-zinc-600 dark:bg-white/[.055] dark:text-zinc-400">
-            Laraloom is for people aged 18 or over. We use your identity, profile, and security information to create and protect your account. Public profile information is visible to others. Read the
+            Sourcefolk is for people aged 18 or over. We use your identity, profile, and security information to create and protect your account. Public profile information is visible to others. Read the
             <flux:link :href="route('legal.privacy')" target="_blank" rel="noreferrer">Privacy Policy</flux:link>;
             you will review and agree to the <flux:link :href="route('legal.terms')" target="_blank" rel="noreferrer">Terms</flux:link> before using member features.
         </div>

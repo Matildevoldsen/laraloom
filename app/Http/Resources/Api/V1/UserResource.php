@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'avatar_url' => $this->avatarUrl(),
             'stack' => $this->stack ?? [],
             'is_available_for_work' => $this->is_available_for_work,
+            'is_verified' => $this->is_verified,
             'is_admin' => $this->when($request->user()?->is($this->resource), $this->is_admin),
             'counts' => [
                 'followers' => $this->whenCounted('followers'),

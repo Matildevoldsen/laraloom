@@ -37,14 +37,14 @@ test('a published post can be opened from the mobile feed', function () {
 });
 
 test('the projects API returns published projects by slug', function () {
-    $project = Project::factory()->create(['slug' => 'laraloom-ios']);
+    $project = Project::factory()->create(['slug' => 'sourcefolk-ios']);
     Project::factory()->create(['status' => ProjectStatus::Pending]);
 
     $this->getJson('/api/v1/projects')
         ->assertOk()
         ->assertJsonCount(1, 'data');
 
-    $this->getJson('/api/v1/projects/laraloom-ios')
+    $this->getJson('/api/v1/projects/sourcefolk-ios')
         ->assertOk()
         ->assertJsonPath('data.id', $project->id);
 });

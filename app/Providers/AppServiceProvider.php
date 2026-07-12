@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('access-admin', fn (User $user): bool => $user->is_admin);
+        Gate::define('access-admin', fn (User $user): bool => $user->is_admin === true);
 
         Post::observe(CommunityActivityObserver::class);
         Comment::observe(CommunityActivityObserver::class);

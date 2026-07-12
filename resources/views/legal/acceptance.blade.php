@@ -1,4 +1,4 @@
-<x-layouts::auth :title="__('Review the Laraloom terms')">
+<x-layouts::auth :title="__('Review the Sourcefolk terms')">
     <div class="flex flex-col gap-6">
         <x-auth-header
             :title="__('One last step')"
@@ -7,6 +7,24 @@
 
         <form method="POST" action="{{ route('legal.acceptance.store') }}" class="flex flex-col gap-5">
             @csrf
+
+            @if ($requiresUsername)
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-white/10 dark:bg-white/[.035]">
+                    <flux:input
+                        name="username"
+                        :label="__('Choose your username')"
+                        :value="old('username', $suggestedUsername)"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        maxlength="30"
+                        description="Your public @handle. Use 3–30 letters, numbers, dashes, or underscores."
+                    />
+                    <p class="mt-3 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                        We suggested your GitHub username where possible. You can change this before continuing.
+                    </p>
+                </div>
+            @endif
 
             <div class="flex min-h-11 items-start gap-3 py-1">
                 <flux:checkbox id="terms_accepted" name="terms_accepted" value="1" :checked="old('terms_accepted')" aria-label="Agree to the Terms of Service" class="mt-0.5 shrink-0" />
@@ -32,13 +50,13 @@
             </div>
 
             <div class="rounded-xl bg-zinc-100 px-4 py-3 text-sm leading-6 text-zinc-600 dark:bg-white/[.055] dark:text-zinc-400">
-                Laraloom uses your personal information to create and operate your account as described in the
+                Sourcefolk uses your personal information to create and operate your account as described in the
                 <flux:link href="{{ route('legal.privacy') }}" target="_blank" rel="noreferrer">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></flux:link>.
                 The Privacy Policy is a notice, not a request for consent.
             </div>
 
             <p class="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-                Terms version {{ $termsVersion }}. If the Terms change materially, Laraloom will ask you to review the new version.
+                Terms version {{ $termsVersion }}. If the Terms change materially, Sourcefolk will ask you to review the new version.
             </p>
 
             <flux:button type="submit" variant="primary" class="w-full" data-test="accept-legal-terms">

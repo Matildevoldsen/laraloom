@@ -21,10 +21,10 @@ class CommunitySeeder extends Seeder
     public function run(): void
     {
         $editor = User::query()->updateOrCreate(
-            ['email' => 'editor@laraloom.local'],
+            ['email' => 'editor@sourcefolk.local'],
             [
-                'name' => 'Laraloom',
-                'username' => 'laraloom',
+                'name' => 'Sourcefolk',
+                'username' => 'sourcefolk',
                 'password' => Hash::make(Str::password(48)),
                 'email_verified_at' => now(),
                 'headline' => 'The open home for the Laravel community.',
@@ -36,12 +36,12 @@ class CommunitySeeder extends Seeder
         );
 
         Project::query()->updateOrCreate(
-            ['slug' => 'laraloom'],
+            ['slug' => 'sourcefolk'],
             [
                 'user_id' => $editor->id,
                 'kind' => ProjectKind::Application,
                 'status' => ProjectStatus::Published,
-                'name' => 'Laraloom',
+                'name' => 'Sourcefolk',
                 'tagline' => 'Everything Laravel, woven together.',
                 'description' => 'An open-source community feed, people directory, project launchpad, and carefully sourced daily Laravel briefing.',
                 'url' => config('app.url'),
@@ -65,8 +65,8 @@ class CommunitySeeder extends Seeder
                 'user_id' => $editor->id,
                 'kind' => PostKind::Project,
                 'status' => PostStatus::Published,
-                'title' => 'Welcome to Laraloom',
-                'slug' => 'welcome-to-laraloom',
+                'title' => 'Welcome to Sourcefolk',
+                'slug' => 'welcome-to-sourcefolk',
                 'body' => 'A community-built home for Laravel people, packages, projects, and the ideas worth carrying forward.',
                 'url' => $url,
                 'tags' => ['Community', 'Open source', 'Laravel'],
@@ -96,7 +96,7 @@ class CommunitySeeder extends Seeder
                 'slug' => 'a-community-not-a-content-farm',
                 'kind' => PostKind::Note,
                 'title' => 'A community, not a content farm',
-                'body' => 'Laraloom stores original commentary and short source metadata—not copied articles. Publishers can request corrections, removal, or a complete domain opt-out.',
+                'body' => 'Sourcefolk stores original commentary and short source metadata—not copied articles. Publishers can request corrections, removal, or a complete domain opt-out.',
                 'tags' => ['Open web', 'Publishers', 'Trust'],
             ],
         ];

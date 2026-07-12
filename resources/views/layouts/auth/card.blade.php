@@ -8,7 +8,7 @@
             <div class="flex w-full max-w-md flex-col gap-6">
                 <a href="{{ route('home') }}" class="flex items-center justify-center gap-3 text-lg font-semibold tracking-[-.04em]" wire:navigate>
                     <span class="loom-mark"><i></i><i></i><i></i></span>
-                    <span>{{ config('app.name', 'Laraloom') }}</span>
+                    <span>{{ config('app.name', 'Sourcefolk') }}</span>
                 </a>
 
                 <div class="flex flex-col gap-6">

@@ -1,13 +1,15 @@
-# Laraloom
+# Sourcefolk
 
 Everything Laravel, woven together.
 
-Laraloom is an open-source community front page for the people, packages, projects, and ideas moving Laravel forward. It combines member publishing and profiles with a carefully bounded “Today in Laravel” discovery agent.
+Sourcefolk is an open-source community front page for the people, packages, projects, and ideas moving Laravel forward. It combines member publishing and profiles with a carefully bounded “Today in Laravel” discovery agent.
+
+Sourcefolk is an independent community project and is not affiliated with, sponsored by, or endorsed by Laravel Holdings Inc. Laravel is a trademark of Laravel Holdings Inc.
 
 ## What makes it different
 
 - **Today in Laravel** — an Azure OpenAI agent finds recent ecosystem signals through Tavily, ranks them for working developers, and explains why each matters.
-- **Creator-first discovery** — Laraloom retains only source metadata and short original summaries. It never stores raw article bodies, and every item sends readers to the original publisher.
+- **Creator-first discovery** — Sourcefolk retains only source metadata and short original summaries. It never stores raw article bodies, and every item sends readers to the original publisher.
 - **Community graph** — profiles, follows, reactions, bookmarks, original posts, and a directory of Laravel applications, packages, tools, and content.
 - **Made with Laravel** — projects can link their repository and verified `*.laravel.cloud` deployment.
 - **Visible provenance** — AI-curated items are labelled, attributed, confidence-gated, and deduplicated by canonical URL.
@@ -74,10 +76,10 @@ The suite covers community permissions and interactions, profiles, publishing, U
 
 ## Deployment
 
-Laraloom is designed for Laravel Cloud with PostgreSQL and the application scheduler enabled. Add the Azure and Tavily secrets as encrypted environment variables, then run migrations and seed the approved source registry.
+Sourcefolk is designed for Laravel Cloud with PostgreSQL and the application scheduler enabled. Add the Azure and Tavily secrets as encrypted environment variables, then run migrations and seed the approved source registry.
 
 ## Contributing
 
 Issues and focused pull requests are welcome. New automated sources must document their permitted access method, attribution requirements, and opt-out path. Do not add a scraper for a site that offers an official feed, API, or embed route.
 
-Laraloom is released under the [MIT License](LICENSE.md).
+Sourcefolk is released under the [MIT License](LICENSE.md).

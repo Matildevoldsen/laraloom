@@ -18,7 +18,7 @@ class EnsureLegalTermsAreAccepted
     {
         $user = $request->user();
 
-        if ($user instanceof User && $user->hasAcceptedCurrentTerms()) {
+        if ($user instanceof User && $user->onboarding_completed_at !== null && $user->hasAcceptedCurrentTerms()) {
             return $next($request);
         }
 
@@ -26,7 +26,9 @@ class EnsureLegalTermsAreAccepted
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'You must accept the current Terms of Service before using this feature.',
+                'message' => $user instanceof User && $user->onboarding_completed_at === null
+                    ? 'Complete your profile before using this feature.'
+                    : 'You must accept the current Terms of Service before using this feature.',
                 'acceptance_url' => $acceptanceUrl,
             ], Response::HTTP_PRECONDITION_REQUIRED);
         }

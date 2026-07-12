@@ -9,7 +9,7 @@
                 <div class="absolute inset-0 bg-neutral-900"></div>
                 <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
                     <span class="loom-mark me-3"><i></i><i></i><i></i></span>
-                    {{ config('app.name', 'Laraloom') }}
+                    {{ config('app.name', 'Sourcefolk') }}
                 </a>
 
                 @php
@@ -27,7 +27,7 @@
                 <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                     <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-2 font-medium lg:hidden" wire:navigate>
                         <span class="loom-mark"><i></i><i></i><i></i></span>
-                        <span class="sr-only">{{ config('app.name', 'Laraloom') }}</span>
+                        <span class="sr-only">{{ config('app.name', 'Sourcefolk') }}</span>
                     </a>
                     {{ $slot }}
                 </div>

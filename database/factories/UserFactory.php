@@ -42,6 +42,7 @@ class UserFactory extends Factory
             'username_changed_at' => null,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'onboarding_completed_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'two_factor_secret' => null,
@@ -59,6 +60,7 @@ class UserFactory extends Factory
             'stack' => fake()->randomElements(['Laravel', 'Livewire', 'Filament', 'Inertia', 'Vue', 'React'], 3),
             'is_available_for_work' => false,
             'is_admin' => false,
+            'is_verified' => false,
         ];
     }
 
@@ -89,5 +91,19 @@ class UserFactory extends Factory
         return $this->afterCreating(function (User $user): void {
             $user->legalAcceptances()->delete();
         });
+    }
+
+    public function withoutCompletedOnboarding(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'onboarding_completed_at' => null,
+        ]);
+    }
+
+    public function verified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_verified' => true,
+        ]);
     }
 }

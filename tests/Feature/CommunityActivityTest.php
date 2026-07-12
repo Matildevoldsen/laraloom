@@ -18,7 +18,7 @@ it('broadcasts public activity to the feed conversation and admin channels', fun
 
     expect($event->broadcastAs())->toBe('community.activity')
         ->and(collect($event->broadcastOn())->map(fn (Channel $channel): string => $channel->name)->all())
-        ->toBe(['private-laraloom.admin', 'laraloom.feed', 'laraloom.posts.42'])
+        ->toBe(['private-sourcefolk.admin', 'sourcefolk.feed', 'sourcefolk.posts.42'])
         ->and($event->broadcastWith())->toMatchArray([
             'type' => 'comment.created',
             'post_id' => 42,
@@ -30,7 +30,7 @@ it('keeps unpublished activity on the private admin channel', function () {
 
     expect($event->broadcastOn())->toHaveCount(1)
         ->and($event->broadcastOn()[0])->toBeInstanceOf(PrivateChannel::class)
-        ->and($event->broadcastOn()[0]->name)->toBe('private-laraloom.admin');
+        ->and($event->broadcastOn()[0]->name)->toBe('private-sourcefolk.admin');
 });
 
 it('maps model activity to a typed broadcast event', function () {
@@ -65,7 +65,7 @@ it('does not expose pending posts on public channels', function () {
 
 it('requires a mobile token for native channel authentication', function () {
     $this->postJson(route('api.v1.broadcasting.auth'), [
-        'channel_name' => 'private-laraloom.admin',
+        'channel_name' => 'private-sourcefolk.admin',
         'socket_id' => '1.2',
     ])->assertUnauthorized();
 });
@@ -85,7 +85,7 @@ it('authorizes administrators for native moderation updates', function () {
     Sanctum::actingAs(User::factory()->create(['is_admin' => true]), ['mobile']);
 
     $this->postJson(route('api.v1.broadcasting.auth'), [
-        'channel_name' => 'private-laraloom.admin',
+        'channel_name' => 'private-sourcefolk.admin',
         'socket_id' => '1.2',
     ])->assertOk()->assertJsonStructure(['auth']);
 });

@@ -24,6 +24,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string|null $github_id
  * @property Carbon|null $email_verified_at
+ * @property Carbon|null $onboarding_completed_at
  * @property string $password
  * @property string|null $username
  * @property Carbon|null $username_changed_at
@@ -39,6 +40,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property array<int, string>|null $stack
  * @property bool $is_available_for_work
  * @property bool $is_admin
+ * @property bool $is_verified
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -52,6 +54,7 @@ use Laravel\Sanctum\HasApiTokens;
     'username_changed_at',
     'email',
     'github_id',
+    'onboarding_completed_at',
     'password',
     'headline',
     'bio',
@@ -80,11 +83,13 @@ class User extends Authenticatable implements PasskeyUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
             'username_changed_at' => 'datetime',
             'password' => 'hashed',
             'stack' => 'array',
             'is_available_for_work' => 'boolean',
             'is_admin' => 'boolean',
+            'is_verified' => 'boolean',
         ];
     }
 

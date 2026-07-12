@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laraloom/laraloom",
+    "name": "sourcefolk/sourcefolk",
     "type": "project",
     "description": "The open community front page for Laravel news, people, packages, and projects.",
     "keywords": [

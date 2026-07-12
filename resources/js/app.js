@@ -63,7 +63,7 @@ const initializeInfiniteFeed = () => {
         sentinel.dataset.loading = 'true';
         const response = await fetch(sentinel.dataset.nextUrl, {
             credentials: 'same-origin',
-            headers: { 'X-Laraloom-Infinite': 'true' },
+            headers: { 'X-Sourcefolk-Infinite': 'true' },
         });
 
         if (!response.ok) {
@@ -141,7 +141,7 @@ if (key && refreshButton instanceof HTMLButtonElement) {
         try {
             const response = await fetch(window.location.href, {
                 credentials: 'same-origin',
-                headers: { 'X-Laraloom-Realtime': 'true' },
+                headers: { 'X-Sourcefolk-Realtime': 'true' },
             });
 
             if (!response.ok) {
@@ -176,21 +176,21 @@ if (key && refreshButton instanceof HTMLButtonElement) {
         }
     };
 
-    echo.channel('laraloom.feed').listen('.community.activity', refreshVisibleContent);
+    echo.channel('sourcefolk.feed').listen('.community.activity', refreshVisibleContent);
 
     const postId = refreshButton.dataset.postId;
     if (postId) {
-        echo.channel(`laraloom.posts.${postId}`).listen('.community.activity', refreshVisibleContent);
+        echo.channel(`sourcefolk.posts.${postId}`).listen('.community.activity', refreshVisibleContent);
     }
 
     const profileId = refreshButton.dataset.profileId;
     if (profileId) {
-        echo.channel(`laraloom.profiles.${profileId}`).listen('.follow.changed', refreshVisibleContent);
+        echo.channel(`sourcefolk.profiles.${profileId}`).listen('.follow.changed', refreshVisibleContent);
     }
 
     const directMessages = document.querySelector('[data-direct-messages]');
     if (directMessages instanceof HTMLElement && directMessages.dataset.userId) {
-        echo.private(`laraloom.users.${directMessages.dataset.userId}.messages`)
+        echo.private(`sourcefolk.users.${directMessages.dataset.userId}.messages`)
             .listen('.message.created', refreshVisibleContent);
     }
 

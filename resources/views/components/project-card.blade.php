@@ -12,7 +12,7 @@
     </div>
     <div class="mt-5 flex flex-wrap gap-2">@foreach (($project->tags ?? []) as $tag)<flux:badge size="sm" color="violet" inset="top bottom">{{ $tag }}</flux:badge>@endforeach</div>
     <div class="mt-auto flex items-center justify-between pt-5 text-xs text-zinc-600">
-        <a href="{{ route('profiles.show', $project->user) }}" class="hover:text-zinc-900 dark:hover:text-zinc-300">by {{ $project->user->name }}</a>
+        <a href="{{ route('profiles.show', $project->user) }}" class="inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-300">by {{ $project->user->name }} <x-verified-badge :user="$project->user" /></a>
         <span class="capitalize">{{ $project->kind->value }}</span>
     </div>
 </article>

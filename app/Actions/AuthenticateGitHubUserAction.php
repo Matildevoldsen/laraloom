@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\User;
+use App\Notifications\WelcomeToSourcefolk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -23,14 +24,20 @@ final class AuthenticateGitHubUserAction
 
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw ValidationException::withMessages([
-                'github' => 'GitHub must provide a verified primary email address to join Laraloom.',
+                'github' => 'GitHub must provide a verified primary email address to join Sourcefolk.',
             ]);
         }
 
-        return DB::transaction(
+        $user = DB::transaction(
             fn (): User => $this->resolveUser($githubUser, $githubId, $email),
             attempts: 3,
         );
+
+        if ($user->wasRecentlyCreated) {
+            $user->notify(new WelcomeToSourcefolk);
+        }
+
+        return $user;
     }
 
     private function resolveUser(SocialiteUser $githubUser, string $githubId, string $email): User
@@ -72,6 +79,7 @@ final class AuthenticateGitHubUserAction
             'username' => $this->availableUsername($githubUser, $githubId),
             'email' => $email,
             'email_verified_at' => now(),
+            'onboarding_completed_at' => null,
             'password' => Str::password(40),
             'github_id' => $githubId,
             'github_username' => $this->githubUsername($githubUser),

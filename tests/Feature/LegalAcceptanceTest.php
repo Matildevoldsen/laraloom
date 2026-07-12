@@ -97,15 +97,15 @@ it('returns a precondition response for unaccepted json requests', function (): 
         ]);
 });
 
-it('redirects new web registrations to the acceptance step', function (): void {
-    $this->post(route('register.store'), [
+it('does not expose password registration on the web', function (): void {
+    $this->post('/register', [
         'name' => 'Ada Lovelace',
         'username' => 'ada_lovelace',
         'email' => 'ada@example.test',
         'password' => 'password',
         'password_confirmation' => 'password',
-    ])->assertRedirect(route('legal.acceptance.show', absolute: false));
+    ])->assertMethodNotAllowed();
 
-    $this->assertAuthenticated();
+    $this->assertGuest();
     expect(LegalAcceptance::query()->count())->toBe(0);
 });

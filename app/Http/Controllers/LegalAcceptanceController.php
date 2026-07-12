@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AcceptLegalTermsAction;
-use App\Http\Requests\AcceptLegalTermsRequest;
+use App\Actions\CompleteOnboardingAction;
+use App\Http\Requests\CompleteOnboardingRequest;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -17,27 +17,34 @@ final class LegalAcceptanceController extends Controller
 
         abort_unless($user instanceof User, 403);
 
-        if ($user->hasAcceptedCurrentTerms()) {
+        if ($user->onboarding_completed_at !== null && $user->hasAcceptedCurrentTerms()) {
             return to_route('home');
         }
 
         return view('legal.acceptance', [
             'effectiveDate' => config()->string('legal.effective_date'),
             'minimumAge' => config()->integer('legal.minimum_age'),
+            'requiresUsername' => $user->onboarding_completed_at === null,
+            'suggestedUsername' => $user->username,
             'termsVersion' => config()->string('legal.terms_version'),
         ]);
     }
 
     public function store(
-        AcceptLegalTermsRequest $request,
-        AcceptLegalTermsAction $acceptLegalTerms,
+        CompleteOnboardingRequest $request,
+        CompleteOnboardingAction $completeOnboarding,
     ): RedirectResponse {
         $user = $request->user();
 
         abort_unless($user instanceof User, 403);
 
-        $acceptLegalTerms->execute($user);
+        $validated = $request->validated();
+        $username = $validated['username'] ?? $user->username;
 
-        return redirect()->intended(route('home'))->with('status', 'Welcome to Laraloom.');
+        abort_unless(is_string($username), 422);
+
+        $completeOnboarding->execute($user, $username);
+
+        return redirect()->intended(route('home'))->with('status', 'Welcome to Sourcefolk.');
     }
 }

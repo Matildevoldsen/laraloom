@@ -38,7 +38,7 @@ final class GitHubAuthenticationController extends Controller
         Auth::login($user, remember: true);
         $request->session()->regenerate();
 
-        if (! $user->hasAcceptedCurrentTerms()) {
+        if ($user->onboarding_completed_at === null || ! $user->hasAcceptedCurrentTerms()) {
             return to_route('legal.acceptance.show');
         }
 

@@ -22,7 +22,7 @@ it('broadcasts follow changes to the viewed profile channel', function () {
             && $event->isFollowing
             && $event->broadcastAs() === 'follow.changed'
             && $event->broadcastOn()[0] instanceof Channel
-            && $event->broadcastOn()[0]->name === "laraloom.profiles.{$creator->id}";
+            && $event->broadcastOn()[0]->name === "sourcefolk.profiles.{$creator->id}";
     });
 });
 

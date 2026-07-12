@@ -32,7 +32,7 @@
                     <div class="flex items-start gap-3">
                         <a href="{{ route('profiles.show', $comment->user) }}"><img class="loom-avatar shrink-0" src="{{ $comment->user->avatarUrl() }}" alt="" /></a>
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2 text-xs"><a href="{{ route('profiles.show', $comment->user) }}" class="font-semibold text-zinc-800 hover:text-[#e73562] dark:text-zinc-300 dark:hover:text-[#ff7693]">{{ $comment->user->name }}</a><span class="text-zinc-500 dark:text-zinc-600">{{ $comment->created_at?->diffForHumans() }}</span></div>
+                            <div class="flex items-center gap-2 text-xs"><a href="{{ route('profiles.show', $comment->user) }}" class="flex items-center gap-1 font-semibold text-zinc-800 hover:text-[#e73562] dark:text-zinc-300 dark:hover:text-[#ff7693]">{{ $comment->user->name }} <x-verified-badge :user="$comment->user" /></a><span class="text-zinc-500 dark:text-zinc-600">{{ $comment->created_at?->diffForHumans() }}</span></div>
                             <p class="mt-2 whitespace-pre-line text-sm leading-6 text-zinc-600 dark:text-zinc-400">{{ $comment->body }}</p>
                             <div class="mt-3 flex items-center gap-3 text-xs text-zinc-600">
                                 @auth
@@ -43,7 +43,7 @@
 
                             @foreach ($comment->replies as $reply)
                                 <div class="mt-4 border-l border-zinc-200 pl-4 dark:border-white/10">
-                                    <div class="flex items-center gap-2 text-xs"><a href="{{ route('profiles.show', $reply->user) }}" class="font-semibold text-zinc-800 dark:text-zinc-300">{{ $reply->user->name }}</a><span class="text-zinc-500 dark:text-zinc-600">{{ $reply->created_at?->diffForHumans() }}</span></div>
+                                    <div class="flex items-center gap-2 text-xs"><a href="{{ route('profiles.show', $reply->user) }}" class="flex items-center gap-1 font-semibold text-zinc-800 dark:text-zinc-300">{{ $reply->user->name }} <x-verified-badge :user="$reply->user" /></a><span class="text-zinc-500 dark:text-zinc-600">{{ $reply->created_at?->diffForHumans() }}</span></div>
                                     <p class="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{{ $reply->body }}</p>
                                 </div>
                             @endforeach

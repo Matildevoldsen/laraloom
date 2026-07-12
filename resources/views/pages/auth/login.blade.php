@@ -1,16 +1,27 @@
 <x-layouts::auth :title="__('Log in')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Welcome back')" :description="__('Continue with GitHub, a passkey, or your email address.')" />
+        <x-auth-header :title="__('Welcome')" :description="__('One secure account for the Laravel community.')" />
 
-        <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <div class="grid gap-2">
+        <div class="rounded-[1.75rem] border border-zinc-200 bg-zinc-50/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/[.035] dark:shadow-none">
+            <div class="flex items-start gap-3">
+                <div class="grid size-11 shrink-0 place-items-center rounded-2xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950">
+                    <flux:icon.code-bracket class="size-5" />
+                </div>
+                <div class="min-w-0">
+                    <p class="font-semibold text-zinc-950 dark:text-white">{{ __('Continue with GitHub') }}</p>
+                    <p class="mt-1 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                        {{ __('Sign in or create your profile using your verified GitHub account.') }}
+                    </p>
+                </div>
+            </div>
+
             <flux:button
                 :href="route('auth.github.redirect')"
                 variant="primary"
                 icon="code-bracket"
-                class="min-h-11 w-full"
+                class="mt-5 min-h-12 w-full"
                 data-test="github-login-button"
             >
                 {{ __('Continue with GitHub') }}
@@ -19,57 +30,17 @@
             @error('github')
                 <p class="text-center text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
+
+            <div class="mt-5 border-t border-zinc-200 pt-4 text-xs leading-5 text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                {{ __('We request your public profile and verified primary email. We never receive your GitHub password.') }}
+            </div>
         </div>
 
-        <x-passkey-verify />
-
-        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
-            @csrf
-
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                :value="old('email')"
-                type="email"
-                required
-                autofocus
-                autocomplete="email"
-                placeholder="email@example.com"
-            />
-
-            <!-- Password -->
-            <div class="relative">
-                <flux:input
-                    name="password"
-                    :label="__('Password')"
-                    type="password"
-                    required
-                    autocomplete="current-password"
-                    :placeholder="__('Password')"
-                    viewable
-                />
-
-                @if (Route::has('password.request'))
-                    <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
-                        {{ __('Forgot your password?') }}
-                    </flux:link>
-                @endif
-            </div>
-
-            <!-- Remember Me -->
-            <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
-
-            <div class="flex items-center justify-end">
-                <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
-                    {{ __('Log in') }}
-                </flux:button>
-            </div>
-        </form>
-
-        <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400">
-            <span>{{ __('Don\'t have an account?') }}</span>
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
-        </div>
+        <p class="text-center text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            {{ __('By continuing, you agree to our') }}
+            <flux:link :href="route('legal.terms')">{{ __('Terms') }}</flux:link>
+            {{ __('and acknowledge our') }}
+            <flux:link :href="route('legal.privacy')">{{ __('Privacy Policy') }}</flux:link>.
+        </p>
     </div>
 </x-layouts::auth>

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\ContentRequestStatusController as AdminContentRequestStatusController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\UserVerificationController as AdminUserVerificationController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentRequestController;
@@ -21,10 +23,14 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\RepostController;
 use App\Http\Controllers\UserAvatarController;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', FeedController::class)->name('home');
 Route::redirect('/dashboard', '/')->name('dashboard');
+Route::get('/register', static fn (): RedirectResponse => to_route('login'))
+    ->middleware('guest')
+    ->name('register');
 
 Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
     Route::get('/auth/github/redirect', [GitHubAuthenticationController::class, 'redirect'])
@@ -110,6 +116,9 @@ Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
 
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function (): void {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::get('/users', AdminUserController::class)->name('users.index');
+        Route::patch('/users/{user}/verification', AdminUserVerificationController::class)
+            ->name('users.verification');
         Route::patch('/posts/{post}/status', AdminPostStatusController::class)->name('posts.status');
         Route::patch('/content-requests/{contentRequest}/status', AdminContentRequestStatusController::class)
             ->name('content-requests.status');
