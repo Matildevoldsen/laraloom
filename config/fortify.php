@@ -75,6 +75,11 @@ return [
 
     'home' => '/dashboard',
 
+    'redirects' => [
+        'login' => '/legal/acceptance',
+        'register' => '/legal/acceptance',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain

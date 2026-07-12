@@ -16,11 +16,11 @@ class ContentRequestController extends Controller
 
     public function store(StoreContentRequest $request): RedirectResponse
     {
-        ContentRequest::create($request->validated());
+        $contentRequest = ContentRequest::create($request->validated());
 
         return to_route('legal.content-request')->with(
             'status',
-            'Your request has been recorded for review.',
+            "Your request {$contentRequest->reference()} has been recorded for review.",
         );
     }
 }

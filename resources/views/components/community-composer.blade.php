@@ -19,7 +19,7 @@
             @csrf
 
             <div class="flex items-start gap-3 px-5 pb-4 pt-6 sm:gap-4 sm:px-6">
-                <span class="loom-avatar mt-1 shrink-0">{{ auth()->user()->initials() }}</span>
+                <img class="loom-avatar mt-1 shrink-0" src="{{ auth()->user()->avatarUrl() }}" alt="" />
 
                 <div class="min-w-0 flex-1">
                     <flux:textarea

@@ -63,4 +63,21 @@ class CommunityFeedTest extends TestCase
             ->assertSee($project->name)
             ->assertSee($user->name);
     }
+
+    public function test_people_to_know_excludes_self_and_existing_follows_and_offers_follow_actions(): void
+    {
+        $member = User::factory()->create(['name' => 'Signed In Member']);
+        $alreadyFollowed = User::factory()->create(['name' => 'Already Followed']);
+        $suggested = User::factory()->create(['name' => 'Suggested Maker']);
+        $member->following()->attach($alreadyFollowed);
+
+        $this->actingAs($member)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('Signed In Member')
+            ->assertDontSee('Already Followed')
+            ->assertSee('Suggested Maker')
+            ->assertSee(route('profiles.follow', $suggested), false)
+            ->assertSee('Follow');
+    }
 }

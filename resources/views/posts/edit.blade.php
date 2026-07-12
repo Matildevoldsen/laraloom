@@ -39,8 +39,8 @@
             <input class="form-input" id="tags" name="tags" value="{{ old('tags', implode(', ', $post->tags ?? [])) }}" />
             @error('tags')<p class="form-error">{{ $message }}</p>@enderror
         </div>
-        <div class="flex items-center justify-between gap-4 border-t border-white/8 pt-6">
-            <a class="text-sm text-zinc-500 hover:text-white" href="{{ route('home') }}">Cancel</a>
+        <div class="flex items-center justify-between gap-4 border-t border-zinc-200 pt-6 dark:border-white/8">
+            <a class="text-sm text-zinc-500 hover:text-zinc-950 dark:hover:text-white" href="{{ route('home') }}">Cancel</a>
             <button class="loom-button" type="submit">Save changes</button>
         </div>
     </form>

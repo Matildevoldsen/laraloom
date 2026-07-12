@@ -70,6 +70,11 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('community-interactions', fn (Request $request): Limit => Limit::perMinute(60)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
 
+        RateLimiter::for('direct-messages', fn (Request $request): array => [
+            Limit::perMinute(30)->by('dm-minute:'.($request->user()?->getAuthIdentifier() ?? $request->ip())),
+            Limit::perDay(500)->by('dm-day:'.($request->user()?->getAuthIdentifier() ?? $request->ip())),
+        ]);
+
         RateLimiter::for('content-requests', fn (Request $request): Limit => Limit::perDay(5)
             ->by((string) $request->ip()));
     }

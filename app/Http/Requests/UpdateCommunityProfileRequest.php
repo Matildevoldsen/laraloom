@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\Validator;
 
 class UpdateCommunityProfileRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class UpdateCommunityProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        return $this->user()?->can('update', $this->route('user')) === true;
     }
 
     /**
@@ -40,9 +42,37 @@ class UpdateCommunityProfileRequest extends FormRequest
             'github_username' => ['nullable', 'string', 'max:39', 'regex:/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/'],
             'x_username' => ['nullable', 'string', 'max:15', 'regex:/^[A-Za-z0-9_]+$/'],
             'avatar_url' => ['nullable', 'url:https', 'max:2048'],
+            'avatar' => ['nullable', File::image()->max('5mb')],
             'stack' => ['nullable', 'array', 'max:8'],
             'stack.*' => ['string', Rule::in(['Laravel', 'Livewire', 'Filament', 'Inertia', 'Vue', 'React', 'Alpine.js', 'Laravel AI'])],
             'is_available_for_work' => ['nullable', 'boolean'],
         ];
+    }
+
+    /** @return array<int, callable(Validator): void> */
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            $user = $this->user();
+
+            if ($user === null || $user->username_changed_at === null) {
+                return;
+            }
+
+            $username = strtolower($this->string('username')->toString());
+
+            if ($username === strtolower((string) $user->username)) {
+                return;
+            }
+
+            $availableAt = $user->username_changed_at->copy()->addMonthNoOverflow();
+
+            if ($availableAt->isFuture()) {
+                $validator->errors()->add(
+                    'username',
+                    'You can change your username again on '.$availableAt->format('j F Y').'.',
+                );
+            }
+        }];
     }
 }

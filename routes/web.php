@@ -1,12 +1,18 @@
 <?php
 
+use App\Http\Controllers\Admin\ContentRequestStatusController as AdminContentRequestStatusController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentRequestController;
+use App\Http\Controllers\DirectConversationController;
+use App\Http\Controllers\DirectConversationReadController;
+use App\Http\Controllers\DirectMessageController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\GitHubAuthenticationController;
+use App\Http\Controllers\LegalAcceptanceController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PostAttachmentController;
 use App\Http\Controllers\PostController;
@@ -14,16 +20,25 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\RepostController;
+use App\Http\Controllers\UserAvatarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', FeedController::class)->name('home');
 Route::redirect('/dashboard', '/')->name('dashboard');
+
+Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
+    Route::get('/auth/github/redirect', [GitHubAuthenticationController::class, 'redirect'])
+        ->name('auth.github.redirect');
+    Route::get('/auth/github/callback', [GitHubAuthenticationController::class, 'callback'])
+        ->name('auth.github.callback');
+});
 
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 Route::get('/@{user:username}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::get('/posts/{post}', [PostController::class, 'show'])->whereNumber('post')->name('posts.show');
 Route::get('/media/{attachment}', PostAttachmentController::class)->name('post-attachments.show');
+Route::get('/avatars/{user}', UserAvatarController::class)->name('avatars.show');
 
 Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/content-policy', [LegalController::class, 'contentPolicy'])->name('legal.content-policy');
@@ -33,7 +48,32 @@ Route::post('/content-request', [ContentRequestController::class, 'store'])
     ->middleware('throttle:content-requests')
     ->name('legal.content-request.store');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth')->group(function (): void {
+    Route::get('/legal/acceptance', [LegalAcceptanceController::class, 'show'])
+        ->name('legal.acceptance.show');
+    Route::post('/legal/acceptance', [LegalAcceptanceController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('legal.acceptance.store');
+});
+
+Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
+    Route::prefix('messages')->name('direct-messages.')->group(function (): void {
+        Route::get('/', [DirectConversationController::class, 'index'])->name('index');
+        Route::post('/with/{recipient:username}', [DirectConversationController::class, 'store'])
+            ->middleware('throttle:direct-messages')
+            ->name('store');
+        Route::get('/{conversation}', [DirectConversationController::class, 'show'])
+            ->whereNumber('conversation')
+            ->name('show');
+        Route::post('/{conversation}', DirectMessageController::class)
+            ->whereNumber('conversation')
+            ->middleware('throttle:direct-messages')
+            ->name('messages.store');
+        Route::put('/{conversation}/read', DirectConversationReadController::class)
+            ->whereNumber('conversation')
+            ->name('read');
+    });
+
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])
         ->middleware('throttle:community-publishing')
@@ -71,6 +111,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function (): void {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
         Route::patch('/posts/{post}/status', AdminPostStatusController::class)->name('posts.status');
+        Route::patch('/content-requests/{contentRequest}/status', AdminContentRequestStatusController::class)
+            ->name('content-requests.status');
     });
 });
 

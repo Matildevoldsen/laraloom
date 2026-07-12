@@ -22,9 +22,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $id
  * @property string $name
  * @property string $email
+ * @property string|null $github_id
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $username
+ * @property Carbon|null $username_changed_at
  * @property string|null $headline
  * @property string|null $bio
  * @property string|null $location
@@ -32,6 +34,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $github_username
  * @property string|null $x_username
  * @property string|null $avatar_url
+ * @property string|null $avatar_disk
+ * @property string|null $avatar_path
  * @property array<int, string>|null $stack
  * @property bool $is_available_for_work
  * @property bool $is_admin
@@ -45,7 +49,9 @@ use Laravel\Sanctum\HasApiTokens;
 #[Fillable([
     'name',
     'username',
+    'username_changed_at',
     'email',
+    'github_id',
     'password',
     'headline',
     'bio',
@@ -54,6 +60,8 @@ use Laravel\Sanctum\HasApiTokens;
     'github_username',
     'x_username',
     'avatar_url',
+    'avatar_disk',
+    'avatar_path',
     'stack',
     'is_available_for_work',
 ])]
@@ -72,6 +80,7 @@ class User extends Authenticatable implements PasskeyUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'username_changed_at' => 'datetime',
             'password' => 'hashed',
             'stack' => 'array',
             'is_available_for_work' => 'boolean',
@@ -129,8 +138,25 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Comment::class);
     }
 
+    /** @return HasMany<LegalAcceptance, $this> */
+    public function legalAcceptances(): HasMany
+    {
+        return $this->hasMany(LegalAcceptance::class);
+    }
+
+    public function hasAcceptedCurrentTerms(): bool
+    {
+        return $this->legalAcceptances()
+            ->where('terms_version', config()->string('legal.terms_version'))
+            ->exists();
+    }
+
     public function avatarUrl(): string
     {
+        if (filled($this->avatar_disk) && filled($this->avatar_path)) {
+            return route('avatars.show', $this);
+        }
+
         if (filled($this->avatar_url)) {
             return $this->avatar_url;
         }

@@ -15,10 +15,15 @@ class ProfileController extends Controller
 {
     public function show(User $user): View
     {
+        $viewer = auth()->user();
         $user->loadCount(['followers', 'following', 'posts', 'projects']);
         $user->setAttribute(
             'is_following',
             auth()->check() && auth()->user()->following()->whereKey($user->id)->exists(),
+        );
+        $user->setAttribute(
+            'can_message',
+            $viewer instanceof User && $viewer->followers()->whereKey($user->id)->exists(),
         );
 
         $posts = $user->posts()

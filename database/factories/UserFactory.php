@@ -17,6 +17,18 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->legalAcceptances()->create([
+                'terms_version' => config('legal.terms_version'),
+                'privacy_version' => config('legal.privacy_version'),
+                'minimum_age' => config('legal.minimum_age'),
+                'accepted_at' => now(),
+            ]);
+        });
+    }
+
     /**
      * Define the model's default state.
      *
@@ -26,7 +38,8 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'username' => fake()->unique()->userName(),
+            'username' => Str::lower(fake()->unique()->bothify('maker_????####')),
+            'username_changed_at' => null,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -41,6 +54,8 @@ class UserFactory extends Factory
             'github_username' => fake()->userName(),
             'x_username' => fake()->userName(),
             'avatar_url' => null,
+            'avatar_disk' => null,
+            'avatar_path' => null,
             'stack' => fake()->randomElements(['Laravel', 'Livewire', 'Filament', 'Inertia', 'Vue', 'React'], 3),
             'is_available_for_work' => false,
             'is_admin' => false,
@@ -67,5 +82,12 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
             'two_factor_confirmed_at' => now(),
         ]);
+    }
+
+    public function withoutLegalAcceptance(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->legalAcceptances()->delete();
+        });
     }
 }

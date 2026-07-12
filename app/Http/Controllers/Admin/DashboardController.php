@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\ContentRequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ContentRequest;
 use App\Models\Post;
@@ -19,14 +20,21 @@ class DashboardController extends Controller
             'posts' => Post::query()->count(),
             'projects' => Project::query()->count(),
             'members' => User::query()->count(),
-            'content_requests' => ContentRequest::query()->where('status', 'pending')->count(),
+            'content_requests' => ContentRequest::query()
+                ->whereIn('status', [ContentRequestStatus::Open->value, ContentRequestStatus::InReview->value])
+                ->count(),
         ];
         $posts = Post::query()
             ->with('user')
             ->orderByRaw("case when status = 'pending' then 0 else 1 end")
             ->latest()
             ->paginate(30);
+        $contentRequests = ContentRequest::query()
+            ->whereIn('status', [ContentRequestStatus::Open->value, ContentRequestStatus::InReview->value])
+            ->latest()
+            ->limit(20)
+            ->get();
 
-        return view('admin.dashboard', compact('counts', 'posts'));
+        return view('admin.dashboard', compact('contentRequests', 'counts', 'posts'));
     }
 }

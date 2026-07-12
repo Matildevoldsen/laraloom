@@ -4,6 +4,50 @@ import Pusher from 'pusher-js';
 const key = import.meta.env.VITE_PUSHER_APP_KEY;
 const refreshButton = document.querySelector('[data-realtime-refresh]');
 
+const scrollMessageThread = () => {
+    const messageThread = document.querySelector('[data-message-scroll]');
+
+    if (messageThread instanceof HTMLElement) {
+        messageThread.scrollTop = messageThread.scrollHeight;
+    }
+};
+
+const markVisibleConversationRead = async () => {
+    const form = document.querySelector('[data-mark-read]');
+
+    if (!(form instanceof HTMLFormElement) || form.dataset.pending === 'true') {
+        return;
+    }
+
+    const csrfToken = form.querySelector('input[name="_token"]');
+    if (!(csrfToken instanceof HTMLInputElement)) {
+        return;
+    }
+
+    form.dataset.pending = 'true';
+    try {
+        const response = await fetch(form.action, {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.value,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Mark read failed with ${response.status}.`);
+        }
+
+        form.remove();
+        document.querySelectorAll('[data-unread-indicator]').forEach((indicator) => indicator.remove());
+    } catch {
+        form.dataset.pending = 'false';
+    }
+};
+
 const initializeInfiniteFeed = () => {
     const sentinel = document.querySelector('[data-infinite-feed]');
 
@@ -46,11 +90,13 @@ const initializeInfiniteFeed = () => {
 };
 
 initializeInfiniteFeed();
+scrollMessageThread();
+void markVisibleConversationRead();
 
 if (key && refreshButton instanceof HTMLButtonElement) {
     window.Pusher = Pusher;
 
-    const echo = new Echo({
+    const echo = window.Echo = new Echo({
         broadcaster: 'pusher',
         key,
         cluster: 'mt1',
@@ -109,7 +155,11 @@ if (key && refreshButton instanceof HTMLButtonElement) {
                 replaceFragment(document, '[data-realtime-conversation-summary]'),
                 replaceFragment(document, '[data-realtime-comments]'),
                 replaceFragment(document, '[data-realtime-profile]'),
+                replaceFragment(document, '[data-direct-messages]'),
             ].some(Boolean);
+
+            scrollMessageThread();
+            void markVisibleConversationRead();
 
             if (!refreshed) {
                 revealRefresh();
@@ -136,6 +186,12 @@ if (key && refreshButton instanceof HTMLButtonElement) {
     const profileId = refreshButton.dataset.profileId;
     if (profileId) {
         echo.channel(`laraloom.profiles.${profileId}`).listen('.follow.changed', refreshVisibleContent);
+    }
+
+    const directMessages = document.querySelector('[data-direct-messages]');
+    if (directMessages instanceof HTMLElement && directMessages.dataset.userId) {
+        echo.private(`laraloom.users.${directMessages.dataset.userId}.messages`)
+            .listen('.message.created', refreshVisibleContent);
     }
 
     refreshButton.addEventListener('click', () => window.location.reload());

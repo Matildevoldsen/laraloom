@@ -13,6 +13,28 @@ test('members cannot open the admin dashboard', function () {
     $this->actingAs($member)->get('/admin')->assertForbidden();
 });
 
+test('admin controls are absent from a members community feed', function () {
+    $member = User::factory()->create();
+    Post::factory()->for($member)->create(['title' => 'A normal member post']);
+
+    $this->actingAs($member)
+        ->get(route('home'))
+        ->assertOk()
+        ->assertDontSee('Admin')
+        ->assertDontSee('Moderate');
+});
+
+test('admin controls are visible to administrators', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+    Post::factory()->create(['title' => 'A post needing review']);
+
+    $this->actingAs($admin)
+        ->get(route('home'))
+        ->assertOk()
+        ->assertSee('Admin')
+        ->assertSee('Moderate');
+});
+
 test('an admin can review and moderate posts on the web', function () {
     $admin = User::factory()->create(['is_admin' => true]);
     $post = Post::factory()->create([

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
         <meta name="description" content="The living front page of the Laravel community." />
     </head>
-    <body class="min-h-screen bg-[#090b0f] text-zinc-100 antialiased">
+    <body class="min-h-screen bg-zinc-50 text-zinc-950 antialiased dark:bg-[#090b0f] dark:text-zinc-100">
         <div class="loom-glow" aria-hidden="true"></div>
 
-        <header class="sticky top-0 z-50 border-b border-white/8 bg-[#090b0f]/85 backdrop-blur-xl">
+        <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-xl dark:border-white/8 dark:bg-[#090b0f]/85">
             <div class="mx-auto flex h-16 max-w-[1480px] items-center gap-6 px-4 sm:px-6">
                 <a href="{{ route('home') }}" class="group flex items-center gap-3" aria-label="Laraloom home">
                     <span class="loom-mark"><i></i><i></i><i></i></span>
@@ -18,18 +18,22 @@
                     <label class="relative block">
                         <span class="sr-only">Search Laraloom</span>
                         <svg class="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                        <input name="q" value="{{ request('q') }}" class="h-10 w-full rounded-full border border-white/10 bg-white/[.045] pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#ff4d73]/60 focus:outline-none" placeholder="Search news, packages, people…" />
+                        <input name="q" value="{{ request('q') }}" class="h-10 w-full rounded-full border border-zinc-200 bg-zinc-100/80 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-500 focus:border-[#ff4d73]/60 focus:bg-white focus:outline-none dark:border-white/10 dark:bg-white/[.045] dark:text-white dark:placeholder:text-zinc-600 dark:focus:bg-white/[.06]" placeholder="Search news, packages, people…" />
                     </label>
                 </form>
 
                 <nav class="ml-auto flex items-center gap-2">
+                    <button type="button" x-data x-on:click="$flux.dark = ! $flux.dark" class="grid size-10 place-items-center rounded-full text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Switch color theme" title="Switch color theme">
+                        <svg x-show="! $flux.dark" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+                        <svg x-show="$flux.dark" x-cloak class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.6 15.5A8.5 8.5 0 0 1 8.5 3.4 8.5 8.5 0 1 0 20.6 15.5Z"/></svg>
+                    </button>
                     @auth
                         <flux:modal.trigger name="community-composer">
                             <flux:button variant="primary" icon="pencil-square" class="hidden rounded-full! bg-[#ff4d73]! hover:bg-[#ff6382]! sm:inline-flex">Post</flux:button>
                         </flux:modal.trigger>
-                        <a href="{{ route('profiles.show', auth()->user()) }}" class="loom-avatar" title="Your profile">{{ str(auth()->user()->name)->substr(0, 1)->upper() }}</a>
+                        <a href="{{ route('profiles.show', auth()->user()) }}" class="loom-avatar" title="Your profile"><img class="size-full object-cover" src="{{ auth()->user()->avatarUrl() }}" alt="" /></a>
                     @else
-                        <a href="{{ route('login') }}" class="hidden px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline">Log in</a>
+                        <a href="{{ route('login') }}" class="hidden px-3 py-2 text-sm text-zinc-600 transition hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white sm:inline">Log in</a>
                         <a href="{{ route('register') }}" class="loom-button"><span class="sm:hidden">Join</span><span class="hidden sm:inline">Join the community</span></a>
                     @endauth
                 </nav>
@@ -37,7 +41,7 @@
         </header>
 
         @if (session('status'))
-            <div class="mx-auto mt-4 max-w-[1480px] px-4 sm:px-6"><div class="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{{ session('status') }}</div></div>
+            <div class="mx-auto mt-4 max-w-[1480px] px-4 sm:px-6"><div class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-200">{{ session('status') }}</div></div>
         @endif
 
         <button
@@ -45,7 +49,7 @@
             data-realtime-refresh
             @if (request()->route('post') instanceof \App\Models\Post) data-post-id="{{ request()->route('post')->id }}" @endif
             @if (request()->route('user') instanceof \App\Models\User) data-profile-id="{{ request()->route('user')->id }}" @endif
-            class="pointer-events-none fixed left-1/2 top-20 z-40 flex -translate-x-1/2 translate-y-2 items-center gap-2 rounded-full border border-[#ff4d73]/25 bg-[#171218]/95 px-4 py-2 text-xs font-semibold text-[#ff9aaf] opacity-0 shadow-2xl shadow-black/40 backdrop-blur-xl transition duration-200 hover:border-[#ff4d73]/45 hover:text-white"
+            class="pointer-events-none fixed left-1/2 top-20 z-40 flex -translate-x-1/2 translate-y-2 items-center gap-2 rounded-full border border-[#ff4d73]/25 bg-white/95 px-4 py-2 text-xs font-semibold text-[#d92855] opacity-0 shadow-2xl shadow-black/10 backdrop-blur-xl transition duration-200 hover:border-[#ff4d73]/45 dark:bg-[#171218]/95 dark:text-[#ff9aaf] dark:shadow-black/40 dark:hover:text-white"
         >
             <span class="size-1.5 rounded-full bg-[#ff4d73] shadow-[0_0_10px_#ff4d73]"></span>
             New activity · refresh
@@ -60,25 +64,26 @@
                     <a href="{{ route('home', ['feed' => 'packages']) }}" @class(['side-link', 'is-active' => request('feed') === 'packages'])>⌘ <span>Packages</span></a>
                     <a href="{{ route('projects.index') }}" @class(['side-link', 'is-active' => request()->routeIs('projects.*')])>◇ <span>Made with Laravel</span></a>
 
-                    <div class="my-5 border-t border-white/8"></div>
+                    <div class="my-5 border-t border-zinc-200 dark:border-white/8"></div>
                     @auth
                         <a href="{{ route('projects.create') }}" class="side-link">＋ <span>Submit a project</span></a>
+                        <a href="{{ route('direct-messages.index') }}" @class(['side-link', 'is-active' => request()->routeIs('direct-messages.*')])>✉ <span>Messages</span></a>
                         <a href="{{ route('profiles.edit', auth()->user()) }}" class="side-link">↗ <span>Edit profile</span></a>
-                        @if (auth()->user()->is_admin)
+                        @can('access-admin')
                             <a href="{{ route('admin.dashboard') }}" @class(['side-link', 'is-active' => request()->routeIs('admin.*')])>◉ <span>Admin</span></a>
-                        @endif
+                        @endcan
                     @endauth
                     <a href="{{ route('legal.content-policy') }}" class="side-link">✓ <span>Content principles</span></a>
                 </nav>
             </aside>
 
-            <main class="min-w-0">@yield('content')</main>
+            <main class="min-w-0">@yield('content'){{ $slot ?? '' }}</main>
 
             <aside class="hidden xl:block">@yield('rail')</aside>
         </div>
 
-        <footer class="border-t border-white/8 px-4 py-8 text-center text-xs text-zinc-600">
-            Built in public for the Laravel community · <a class="hover:text-zinc-300" href="{{ route('legal.content-policy') }}">Content policy</a> · <a class="hover:text-zinc-300" href="{{ route('legal.privacy') }}">Privacy</a> · <a class="hover:text-zinc-300" href="{{ route('legal.terms') }}">Terms</a>
+        <footer class="border-t border-zinc-200 px-4 py-8 text-center text-xs text-zinc-500 dark:border-white/8 dark:text-zinc-600">
+            Built in public for the Laravel community · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.content-policy') }}">Content policy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.privacy') }}">Privacy</a> · <a class="hover:text-zinc-900 dark:hover:text-zinc-300" href="{{ route('legal.terms') }}">Terms</a>
         </footer>
         <x-community-composer />
         @fluxScripts

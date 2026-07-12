@@ -49,6 +49,10 @@ class FeedController extends Controller
 
         $people = User::query()
             ->whereNotNull('username')
+            ->when($request->user() instanceof User, function (Builder $query) use ($request): void {
+                $query->whereKeyNot($request->user()->getKey())
+                    ->whereNotIn('users.id', $request->user()->following()->select('users.id'));
+            })
             ->withCount(['followers', 'projects'])
             ->orderByDesc('followers_count')
             ->orderByDesc('projects_count')

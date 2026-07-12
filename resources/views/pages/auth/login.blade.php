@@ -1,9 +1,25 @@
 <x-layouts::auth :title="__('Log in')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+        <x-auth-header :title="__('Welcome back')" :description="__('Continue with GitHub, a passkey, or your email address.')" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
+
+        <div class="grid gap-2">
+            <flux:button
+                :href="route('auth.github.redirect')"
+                variant="primary"
+                icon="code-bracket"
+                class="min-h-11 w-full"
+                data-test="github-login-button"
+            >
+                {{ __('Continue with GitHub') }}
+            </flux:button>
+
+            @error('github')
+                <p class="text-center text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+            @enderror
+        </div>
 
         <x-passkey-verify />
 
