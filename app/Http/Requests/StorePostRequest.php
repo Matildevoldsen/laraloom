@@ -34,7 +34,7 @@ class StorePostRequest extends FormRequest
             'attachments' => ['nullable', 'array', 'max:4'],
             'attachments.*' => [
                 'file',
-                File::types(['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'webm'])
+                File::types(['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'heif', 'mp4', 'mov', 'webm'])
                     ->max('100mb'),
             ],
         ];

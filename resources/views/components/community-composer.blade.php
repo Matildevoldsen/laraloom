@@ -57,10 +57,10 @@
 
             <div class="flex items-center justify-between gap-3 border-t border-zinc-200/80 px-5 py-3 dark:border-white/8 sm:px-6">
                 <div class="flex min-w-0 items-center gap-1">
-                    <label class="inline-flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/10 dark:hover:text-white">
+                    <label class="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-950 focus-within:ring-2 focus-within:ring-[#ff4d73] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white">
                         <flux:icon name="photo" class="size-5" />
                         <span class="hidden sm:inline" x-text="attachments.length ? `${attachments.length} selected` : 'Media'">Media</span>
-                        <input type="file" name="attachments[]" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" multiple class="sr-only" x-on:change="attachments = Array.from($event.target.files)" />
+                        <input type="file" name="attachments[]" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,video/mp4,video/quicktime,video/webm" multiple class="sr-only" x-on:change="attachments = Array.from($event.target.files)" />
                     </label>
                     <flux:button type="button" variant="ghost" size="sm" icon="plus" class="rounded-full!" x-on:click="showDetails = ! showDetails">
                         <span x-text="showDetails ? 'Hide details' : 'Details'">Details</span>

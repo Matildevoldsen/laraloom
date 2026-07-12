@@ -64,14 +64,15 @@ class CommunityPublishingTest extends TestCase
             'body' => 'A media update from the Laravel community.',
             'attachments' => [
                 UploadedFile::fake()->image('cloud-launch.jpg', 1200, 800),
+                UploadedFile::fake()->create('iphone-photo.heic', 1024, 'image/heic'),
                 UploadedFile::fake()->create('demo.mp4', 2048, 'video/mp4'),
             ],
         ])->assertRedirect(route('home'));
 
         $post = Post::query()->with('attachments')->sole();
 
-        $this->assertCount(2, $post->attachments);
-        $this->assertSame(['image', 'video'], $post->attachments->pluck('media_type')->all());
+        $this->assertCount(3, $post->attachments);
+        $this->assertSame(['image', 'image', 'video'], $post->attachments->pluck('media_type')->all());
         foreach ($post->attachments as $attachment) {
             Storage::disk('r2')->assertExists($attachment->path);
         }
