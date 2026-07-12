@@ -48,6 +48,8 @@ new class extends Component
 
 <a
     href="{{ route('notifications.index') }}"
+    data-notification-indicator
+    data-unread-count="{{ $unreadCount }}"
     @class([
         'relative grid size-10 place-items-center rounded-full text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 dark:hover:bg-white/5 dark:hover:text-white',
         'bg-zinc-100 text-zinc-950 dark:bg-white/5 dark:text-white' => request()->routeIs('notifications.*'),

@@ -42,7 +42,9 @@ test('community interactions create notifications for their recipient', function
         ->assertSee('commented on your post')
         ->assertSee('reposted your post')
         ->assertSee('followed you')
-        ->assertSee('This is a thoughtful addition.');
+        ->assertSee('This is a thoughtful addition.')
+        ->assertSee('Unread')
+        ->assertSee('data-unread-count="4"', escape: false);
 });
 
 test('replies notify the comment author and post author without duplicates', function (): void {
@@ -107,6 +109,11 @@ test('members can filter and mark their notifications as read', function (): voi
         ->assertRedirect(route('profiles.show', $actor, absolute: false));
 
     expect($notification->fresh()->read_at)->not->toBeNull();
+
+    $this->actingAs($recipient)
+        ->get(route('notifications.index'))
+        ->assertSuccessful()
+        ->assertSee('Read');
 
     Follow::factory()->create([
         'follower_id' => User::factory()->create()->id,
@@ -221,4 +228,33 @@ test('the notification center prepends new activity when its private event arriv
         'notification_id' => $notification->id,
         'occurred_at' => now()->toIso8601String(),
     ])->assertSee('Live Community Member');
+});
+
+test('the favicon and browser title track the live unread count', function (): void {
+    $recipient = User::factory()->create();
+    $actor = User::factory()->create();
+    Follow::factory()->create([
+        'follower_id' => $actor->id,
+        'following_id' => $recipient->id,
+    ]);
+    $this->actingAs($recipient);
+
+    Livewire::test('notification-indicator')
+        ->assertSet('unreadCount', 1)
+        ->assertSeeHtml('data-unread-count="1"')
+        ->call('notificationCreated', [
+            'user_id' => $recipient->id,
+            'notification_id' => 'new-notification-id',
+            'occurred_at' => now()->toIso8601String(),
+        ])
+        ->assertSet('unreadCount', 2)
+        ->assertSeeHtml('data-unread-count="2"');
+
+    $javascript = file_get_contents(resource_path('js/notification-favicon.js'));
+
+    expect($javascript)
+        ->toContain("const indicatorSelector = '[data-notification-indicator]'")
+        ->toContain('document.title = count > 0')
+        ->toContain("context.fillStyle = '#ff4d73'")
+        ->toContain('new MutationObserver(refreshNotificationFavicon)');
 });

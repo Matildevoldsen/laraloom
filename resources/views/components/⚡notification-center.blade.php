@@ -190,9 +190,12 @@ new class extends Component
                             <span class="mt-1 block truncate text-xs text-zinc-500">{{ $data['comment_excerpt'] }}</span>
                         @endif
 
-                        <time class="mt-1.5 block text-[11px] text-zinc-500" datetime="{{ $notification->created_at?->toIso8601String() }}">
-                            {{ $notification->created_at?->diffForHumans() }}
-                        </time>
+                        <span class="mt-1.5 flex items-center gap-2 text-[11px] text-zinc-500">
+                            <time datetime="{{ $notification->created_at?->toIso8601String() }}">
+                                {{ $notification->created_at?->diffForHumans() }}
+                            </time>
+                            <span aria-label="Notification status">{{ $notification->unread() ? 'Unread' : 'Read' }}</span>
+                        </span>
                     </span>
 
                     @if ($notification->unread())
