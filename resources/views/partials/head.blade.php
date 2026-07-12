@@ -37,9 +37,9 @@
 <meta name="twitter:image" content="{{ $socialImageUrl }}" />
 <meta name="twitter:image:alt" content="Sourcefolk — everything happening in Laravel, woven together" />
 
-<link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any" />
-<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}" />
+<link rel="icon" href="{{ asset('sourcefolk-favicon.ico') }}" sizes="any" />
+<link rel="icon" href="{{ asset('sourcefolk-mark.svg') }}" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="{{ asset('sourcefolk-apple-touch-icon.png') }}" />
 <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 
 @fonts

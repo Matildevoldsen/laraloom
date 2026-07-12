@@ -22,6 +22,8 @@ test('the public feed exposes complete social metadata', function (): void {
         ->assertSee('<meta property="og:image:height" content="630"', false)
         ->assertSee('<meta name="twitter:card" content="summary_large_image"', false)
         ->assertSee('<meta name="twitter:image" content="https://sourcefolk.com/social/sourcefolk-card.png"', false)
+        ->assertSee('<link rel="icon" href="https://sourcefolk.com/sourcefolk-mark.svg" type="image/svg+xml"', false)
+        ->assertSee('<link rel="apple-touch-icon" href="https://sourcefolk.com/sourcefolk-apple-touch-icon.png"', false)
         ->assertSee('<link rel="manifest" href="https://sourcefolk.com/site.webmanifest"', false);
 });
 
@@ -66,8 +68,9 @@ test('sourcefolk icon and social card assets have production dimensions', functi
     $touchIcon = getimagesize(public_path('apple-touch-icon.png'));
     $appIcon = getimagesize(public_path('icon-512.png'));
 
-    expect(public_path('favicon.svg'))->toBeFile()
-        ->and(public_path('favicon.ico'))->toBeFile()
+    expect(public_path('sourcefolk-mark.svg'))->toBeFile()
+        ->and(public_path('sourcefolk-favicon.ico'))->toBeFile()
+        ->and(public_path('sourcefolk-apple-touch-icon.png'))->toBeFile()
         ->and($socialCard)->not->toBeFalse()
         ->and($socialCard[0])->toBe(1200)
         ->and($socialCard[1])->toBe(630)
