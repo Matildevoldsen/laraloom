@@ -24,7 +24,7 @@
         @forelse ($posts as $post)
             <x-post-card :$post />
         @empty
-            <div class="loom-empty"><span>✦</span><h2>No threads here yet</h2><p>Be the first to add something worth knowing.</p>@auth<a class="loom-button mt-4" href="{{ route('posts.create') }}">Share with Laravel</a>@endauth</div>
+            <div class="loom-empty"><span>✦</span><h2>No threads here yet</h2><p>Be the first to add something worth knowing.</p>@auth<flux:modal.trigger name="community-composer"><flux:button variant="primary" class="mt-4 rounded-full! bg-[#ff4d73]!">Share with Laravel</flux:button></flux:modal.trigger>@endauth</div>
         @endforelse
     </div>
     @if ($posts->nextPageUrl())

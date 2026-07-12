@@ -24,7 +24,9 @@
 
                 <nav class="ml-auto flex items-center gap-2">
                     @auth
-                        <a href="{{ route('posts.create') }}" class="loom-button hidden sm:inline-flex">Share something</a>
+                        <flux:modal.trigger name="community-composer">
+                            <flux:button variant="primary" icon="pencil-square" class="hidden rounded-full! bg-[#ff4d73]! hover:bg-[#ff6382]! sm:inline-flex">Post</flux:button>
+                        </flux:modal.trigger>
                         <a href="{{ route('profiles.show', auth()->user()) }}" class="loom-avatar" title="Your profile">{{ str(auth()->user()->name)->substr(0, 1)->upper() }}</a>
                     @else
                         <a href="{{ route('login') }}" class="hidden px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline">Log in</a>
@@ -78,6 +80,7 @@
         <footer class="border-t border-white/8 px-4 py-8 text-center text-xs text-zinc-600">
             Built in public for the Laravel community · <a class="hover:text-zinc-300" href="{{ route('legal.content-policy') }}">Content policy</a> · <a class="hover:text-zinc-300" href="{{ route('legal.privacy') }}">Privacy</a> · <a class="hover:text-zinc-300" href="{{ route('legal.terms') }}">Terms</a>
         </footer>
+        <x-community-composer />
         @fluxScripts
     </body>
 </html>
