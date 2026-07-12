@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ContentRequestStatusController as AdminContentReq
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PostStatusController as AdminPostStatusController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\UserDeletionController as AdminUserDeletionController;
 use App\Http\Controllers\Admin\UserVerificationController as AdminUserVerificationController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CommentController;
@@ -119,6 +120,8 @@ Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
         Route::get('/users', AdminUserController::class)->name('users.index');
         Route::patch('/users/{user}/verification', AdminUserVerificationController::class)
             ->name('users.verification');
+        Route::delete('/users/{user}', AdminUserDeletionController::class)
+            ->name('users.destroy');
         Route::patch('/posts/{post}/status', AdminPostStatusController::class)->name('posts.status');
         Route::patch('/content-requests/{contentRequest}/status', AdminContentRequestStatusController::class)
             ->name('content-requests.status');

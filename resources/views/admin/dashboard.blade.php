@@ -8,7 +8,7 @@
             <p class="mt-2 text-sm text-zinc-500">Moderate submissions without losing attribution or context.</p>
         </div>
         <div class="flex items-center gap-2">
-            <a class="rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium hover:border-zinc-500 dark:border-white/10 dark:hover:border-white/25" href="{{ route('admin.users.index') }}">Verify members</a>
+            <a class="rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium hover:border-zinc-500 dark:border-white/10 dark:hover:border-white/25" href="{{ route('admin.users.index') }}">Manage members</a>
             <span class="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-700 dark:text-emerald-300">Protected</span>
         </div>
     </div>
