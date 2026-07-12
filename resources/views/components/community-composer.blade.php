@@ -41,28 +41,28 @@
                 </div>
             </div>
 
-            <div x-cloak x-show="showDetails" x-collapse class="border-t border-zinc-200/80 px-5 py-4 dark:border-white/8 sm:px-6">
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <flux:select name="kind" label="Post type">
+            <div x-cloak x-show="showDetails" x-collapse class="px-5 pb-4 sm:px-6">
+                <div class="grid gap-4 rounded-2xl bg-zinc-100/80 p-4 dark:bg-white/6 sm:grid-cols-2">
+                    <flux:select name="kind" label="Type" badge="Post by default">
                         @foreach (App\PostKind::cases() as $kind)
-                            <flux:select.option :value="$kind->value" :selected="old('kind', 'note') === $kind->value">{{ str($kind->value)->headline() }}</flux:select.option>
+                            <flux:select.option :value="$kind->value" :selected="old('kind', 'note') === $kind->value">{{ $kind === App\PostKind::Note ? 'Post' : str($kind->value)->headline() }}</flux:select.option>
                         @endforeach
                     </flux:select>
 
-                    <flux:input name="title" label="Headline" :value="old('title')" maxlength="180" placeholder="Optional for notes" />
-                    <flux:input name="url" label="Original link" type="url" :value="old('url')" placeholder="https://…" icon="link" />
-                    <flux:input name="tags" label="Tags" :value="old('tags')" maxlength="240" placeholder="Laravel, Livewire, AI" icon="tag" />
+                    <flux:input name="title" label="Title" badge="Optional" variant="filled" :value="old('title')" maxlength="180" placeholder="Add a headline if useful" />
+                    <flux:input name="url" label="Link" badge="Optional" variant="filled" type="url" :value="old('url')" placeholder="https://…" />
+                    <flux:input name="tags" label="Topics" badge="Optional" variant="filled" :value="old('tags')" maxlength="240" placeholder="Laravel, Livewire, AI" />
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-3 border-t border-zinc-200/80 px-5 py-3 dark:border-white/8 sm:px-6">
-                <div class="flex min-w-0 items-center gap-1">
+            <div class="flex items-center justify-between gap-3 px-5 py-3 sm:px-6">
+                <div class="flex min-w-0 items-center gap-2">
                     <label class="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-950 focus-within:ring-2 focus-within:ring-[#ff4d73] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white">
                         <flux:icon name="photo" class="size-5" />
                         <span class="hidden sm:inline" x-text="attachments.length ? `${attachments.length} selected` : 'Media'">Media</span>
                         <input type="file" name="attachments[]" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,video/mp4,video/quicktime,video/webm" multiple class="sr-only" x-on:change="attachments = Array.from($event.target.files)" />
                     </label>
-                    <flux:button type="button" variant="ghost" size="sm" icon="plus" class="rounded-full!" x-on:click="showDetails = ! showDetails">
+                    <flux:button type="button" variant="ghost" size="sm" icon="adjustments-horizontal" class="min-h-11! rounded-full!" x-on:click="showDetails = ! showDetails">
                         <span x-text="showDetails ? 'Hide details' : 'Details'">Details</span>
                     </flux:button>
                 </div>

@@ -61,7 +61,6 @@ class CommunityPublishingTest extends TestCase
 
         $this->actingAs($member)->post(route('posts.store'), [
             'kind' => PostKind::Note->value,
-            'body' => 'A media update from the Laravel community.',
             'attachments' => [
                 UploadedFile::fake()->image('cloud-launch.jpg', 1200, 800),
                 UploadedFile::fake()->create('iphone-photo.heic', 1024, 'image/heic'),
@@ -90,6 +89,22 @@ class CommunityPublishingTest extends TestCase
 
         $this->assertDatabaseCount('posts', 0);
         Storage::disk('r2')->assertDirectoryEmpty('/');
+    }
+
+    public function test_member_can_publish_any_post_type_without_a_title_or_url(): void
+    {
+        $member = User::factory()->create();
+
+        $this->actingAs($member)->post(route('posts.store'), [
+            'kind' => PostKind::Article->value,
+            'body' => 'The body is enough to publish this post.',
+        ])->assertRedirect(route('home'));
+
+        $this->assertDatabaseHas('posts', [
+            'kind' => PostKind::Article->value,
+            'title' => null,
+            'url' => null,
+        ]);
     }
 
     public function test_project_rejects_a_fake_laravel_cloud_hostname(): void

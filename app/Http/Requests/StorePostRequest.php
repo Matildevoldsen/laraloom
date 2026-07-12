@@ -27,7 +27,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'kind' => ['required', Rule::enum(PostKind::class)],
-            'title' => ['nullable', 'string', 'max:180', 'required_unless:kind,note'],
+            'title' => ['nullable', 'string', 'max:180'],
             'body' => ['nullable', 'string', 'max:1500', 'required_without_all:url,attachments'],
             'url' => ['nullable', 'url:http,https', 'max:2048'],
             'tags' => ['nullable', 'string', 'max:240'],
