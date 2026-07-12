@@ -103,7 +103,9 @@ Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
     Route::get('/@{user:username}/edit', [ProfileController::class, 'edit'])->name('profiles.edit');
-    Route::put('/@{user:username}', [ProfileController::class, 'update'])->name('profiles.update');
+    Route::put('/profiles/{user}', [ProfileController::class, 'update'])
+        ->whereNumber('user')
+        ->name('profiles.update');
 
     Route::post('/posts/{post}/reaction', ReactionController::class)
         ->middleware('throttle:community-interactions')

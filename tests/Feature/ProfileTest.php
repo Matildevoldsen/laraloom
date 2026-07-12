@@ -52,6 +52,33 @@ class ProfileTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_username_change_follows_the_new_canonical_profile_url(): void
+    {
+        $member = User::factory()->create([
+            'username' => 'matilde',
+            'username_changed_at' => null,
+        ]);
+        $stableUpdateUrl = route('profiles.update', $member);
+
+        $response = $this->actingAs($member)->put($stableUpdateUrl, [
+            'name' => $member->name,
+            'username' => 'tillythecoder',
+        ]);
+
+        $response->assertRedirect(route('profiles.show', ['user' => 'tillythecoder']));
+
+        $this->get(route('profiles.show', ['user' => 'tillythecoder']))
+            ->assertOk()
+            ->assertSee('@tillythecoder');
+
+        $this->actingAs($member)->put($stableUpdateUrl, [
+            'name' => 'Updated from a stale tab',
+            'username' => 'tillythecoder',
+        ])->assertRedirect(route('profiles.show', ['user' => 'tillythecoder']));
+
+        expect($member->refresh()->name)->toBe('Updated from a stale tab');
+    }
+
     public function test_member_can_follow_and_unfollow_another_member(): void
     {
         $member = User::factory()->create();

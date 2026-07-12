@@ -82,6 +82,7 @@ class ProfileController extends Controller
         Gate::authorize('update', $user);
         $user = $updateProfile->execute($user, $request->validated());
 
-        return to_route('profiles.show', $user)->with('status', 'Profile updated.');
+        return to_route('profiles.show', ['user' => $user->username])
+            ->with('status', 'Profile updated.');
     }
 }
