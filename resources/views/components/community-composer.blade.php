@@ -4,7 +4,11 @@
     @endif
 
     <flux:modal name="community-composer" variant="floating" class="w-[calc(100vw-1.5rem)] max-w-2xl p-0!" scroll="body">
-        <form method="POST" action="{{ route('posts.store') }}">
+        <form
+            method="POST"
+            action="{{ route('posts.store') }}"
+            x-data="{ showDetails: {{ $errors->hasAny(['kind', 'title', 'url', 'tags']) || old('kind', 'note') !== 'note' ? 'true' : 'false' }} }"
+        >
             @csrf
 
             <div class="flex items-start gap-3 px-5 pb-4 pt-6 sm:gap-4 sm:px-6">
@@ -28,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="border-y border-zinc-200/80 px-5 py-4 dark:border-white/8 sm:px-6">
+            <div x-cloak x-show="showDetails" x-collapse class="border-t border-zinc-200/80 px-5 py-4 dark:border-white/8 sm:px-6">
                 <div class="grid gap-4 sm:grid-cols-2">
                     <flux:select name="kind" label="Post type">
                         @foreach (App\PostKind::cases() as $kind)
@@ -42,8 +46,10 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
-                <p class="max-w-sm text-xs leading-5 text-zinc-500">Share original context and link to sources. Don’t paste someone else’s article.</p>
+            <div class="flex items-center justify-between gap-3 border-t border-zinc-200/80 px-5 py-3 dark:border-white/8 sm:px-6">
+                <flux:button type="button" variant="ghost" size="sm" icon="plus" class="rounded-full!" x-on:click="showDetails = ! showDetails">
+                    <span x-text="showDetails ? 'Hide details' : 'Add details'">Add details</span>
+                </flux:button>
                 <flux:button type="submit" variant="primary" icon="paper-airplane" class="rounded-full! bg-[#ff4d73]! px-5! hover:bg-[#ff6382]!">Post</flux:button>
             </div>
         </form>
