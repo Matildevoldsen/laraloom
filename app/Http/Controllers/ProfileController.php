@@ -7,13 +7,14 @@ use App\Http\Requests\UpdateCommunityProfileRequest;
 use App\Models\User;
 use App\PostStatus;
 use App\ProjectStatus;
+use App\Services\GitHubProfileClient;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 
 class ProfileController extends Controller
 {
-    public function show(User $user): View
+    public function show(User $user, GitHubProfileClient $gitHub): View
     {
         $viewer = auth()->user();
         $user->loadCount(['followers', 'following', 'posts', 'projects']);
@@ -57,10 +58,16 @@ class ProfileController extends Controller
             ->latest('reposts.created_at')
             ->limit(20)
             ->get();
+        $gitHubActivity = request('tab') === 'github'
+            && filled($user->github_id)
+            && filled($user->github_username)
+            ? $gitHub->activity((string) $user->github_username)
+            : null;
 
         return view('profiles.show', compact(
             'followers',
             'following',
+            'gitHubActivity',
             'likedPosts',
             'posts',
             'projects',

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -26,6 +27,57 @@ class ProfileTest extends TestCase
             ->assertSee('Laravel Maker')
             ->assertSee('@maker')
             ->assertSee('Livewire');
+    }
+
+    public function test_linked_profile_displays_public_github_activity(): void
+    {
+        Http::fake([
+            'api.github.com/users/sourcefolk-maker' => Http::response([
+                'public_repos' => 79,
+            ]),
+            'api.github.com/search/commits*' => Http::response([
+                'total_count' => 830,
+                'incomplete_results' => false,
+                'items' => [[
+                    'sha' => 'dfaa4f12067c75cc3fc91805d75d0fffc65f41d1',
+                    'html_url' => 'https://github.com/sourcefolk-maker/package/commit/dfaa4f12067c75cc3fc91805d75d0fffc65f41d1',
+                    'repository' => ['full_name' => 'sourcefolk-maker/package'],
+                    'commit' => [
+                        'message' => 'Ship a useful package',
+                        'author' => ['date' => '2026-07-12T12:00:00Z'],
+                    ],
+                ]],
+            ]),
+        ]);
+
+        $user = User::factory()->create([
+            'username' => 'sourcefolk-maker',
+            'github_id' => '123456',
+            'github_username' => 'sourcefolk-maker',
+        ]);
+
+        $this->get(route('profiles.show', [$user, 'tab' => 'github']))
+            ->assertOk()
+            ->assertSee('79')
+            ->assertSee('830')
+            ->assertSee('indexed commits in owned repos')
+            ->assertSee('Top commits')
+            ->assertSee('Ship a useful package')
+            ->assertSee('sourcefolk-maker/package')
+            ->assertSee('dfaa4f1');
+    }
+
+    public function test_standard_profile_tabs_do_not_wait_for_github(): void
+    {
+        Http::fake();
+        $user = User::factory()->create([
+            'github_id' => '123456',
+            'github_username' => 'sourcefolk-maker',
+        ]);
+
+        $this->get(route('profiles.show', $user))->assertOk();
+
+        Http::assertNothingSent();
     }
 
     public function test_member_can_update_own_profile_but_not_another_profile(): void
@@ -171,6 +223,24 @@ class ProfileTest extends TestCase
         expect($member->refresh()->name)->toBe('A New Display Name')
             ->and($member->headline)->toBe('A clearer profile description.')
             ->and($member->username)->toBe('steady-name');
+    }
+
+    public function test_linked_github_username_cannot_be_changed_from_the_profile_form(): void
+    {
+        $member = User::factory()->create([
+            'github_id' => '123456',
+            'github_username' => 'linked-maker',
+        ]);
+
+        $this->actingAs($member)
+            ->put(route('profiles.update', $member), [
+                'name' => $member->name,
+                'username' => $member->username,
+                'github_username' => 'another-account',
+            ])
+            ->assertRedirect();
+
+        expect($member->refresh()->github_username)->toBe('linked-maker');
     }
 
     public function test_username_can_change_after_the_monthly_cooldown(): void

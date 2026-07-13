@@ -42,17 +42,44 @@
                     @if ($user->is_available_for_work)<span class="text-emerald-400">● Available for work</span>@endif
                 </div>
                 @if ($user->stack)<div class="mt-4 flex flex-wrap gap-2">@foreach ($user->stack as $item)<flux:badge size="sm" color="violet" inset="top bottom">{{ $item }}</flux:badge>@endforeach</div>@endif
+
+                @if ($user->github_id && $user->github_username)
+                    <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-zinc-200 pt-4 text-xs dark:border-white/8">
+                        <a class="inline-flex items-center gap-2 font-medium text-zinc-700 transition hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white" href="https://github.com/{{ $user->github_username }}" rel="me noopener noreferrer" target="_blank">
+                            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.29-5.27-1.28-5.27-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.75 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.7 5.38-5.28 5.67.42.36.79 1.07.79 2.16v3.2c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z" /></svg>
+                            {{ '@'.$user->github_username }}
+                            <span aria-hidden="true">↗</span>
+                        </a>
+                        @if ($gitHubActivity)
+                            <a class="text-zinc-500 transition hover:text-zinc-900 dark:hover:text-zinc-200" href="{{ route('profiles.show', [$user, 'tab' => 'github']) }}"><b class="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{{ number_format($gitHubActivity->publicRepositories) }}</b> public repos</a>
+                            <a class="text-zinc-500 transition hover:text-zinc-900 dark:hover:text-zinc-200" href="{{ route('profiles.show', [$user, 'tab' => 'github']) }}"><b class="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{{ $gitHubActivity->commitCountIncomplete ? 'At least ' : '' }}{{ number_format($gitHubActivity->indexedCommitsInOwnedRepositories) }}</b> indexed commits in owned repos</a>
+                        @endif
+                    </div>
+                @endif
             </div>
         </section>
 
         @php($activeTab = request('tab', 'posts'))
         <nav class="mb-5 flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-white/8" aria-label="Profile content">
-            @foreach (['posts' => 'Posts', 'replies' => 'Replies', 'reposts' => 'Reposts', 'likes' => 'Likes', 'projects' => 'Packages'] as $tab => $label)
+            @foreach ([
+                'posts' => 'Posts',
+                'replies' => 'Replies',
+                'reposts' => 'Reposts',
+                'likes' => 'Likes',
+                'projects' => 'Packages',
+                ...($user->github_id && $user->github_username ? ['github' => 'GitHub'] : []),
+            ] as $tab => $label)
                 <a href="{{ route('profiles.show', [$user, 'tab' => $tab]) }}" @class(['border-b-2 px-4 py-3 text-sm font-medium transition', 'border-[#ff4d73] text-zinc-950 dark:text-white' => $activeTab === $tab, 'border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200' => $activeTab !== $tab])>{{ $label }}</a>
             @endforeach
         </nav>
 
-        @if ($activeTab === 'projects')
+        @if ($activeTab === 'github' && $user->github_id && $user->github_username)
+            @if ($gitHubActivity)
+                <x-github-profile-activity :activity="$gitHubActivity" :user="$user" />
+            @else
+                <x-profile-empty icon="↗" message="GitHub activity is temporarily unavailable. The linked profile is still available." />
+            @endif
+        @elseif ($activeTab === 'projects')
             <div class="grid gap-4 sm:grid-cols-2">@forelse ($projects as $project)<x-project-card :$project />@empty<x-profile-empty icon="◇" :message="$user->name.' has not shared a package or project yet.'" />@endforelse</div>
         @elseif ($activeTab === 'replies')
             <div class="space-y-3">@forelse ($replies as $reply)<a href="{{ route('posts.show', $reply->post) }}#conversation" class="loom-card block p-5"><p class="text-xs text-zinc-500">Replied in {{ $reply->post->title ?: 'a conversation' }}</p><p class="mt-2 text-sm text-zinc-800 dark:text-zinc-200">{{ $reply->body }}</p></a>@empty<x-profile-empty icon="◯" :message="$user->name.' has not replied yet.'" />@endforelse</div>

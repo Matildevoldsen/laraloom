@@ -68,13 +68,24 @@
                 @error('bio')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 
-            @foreach (['location' => 'Location', 'website_url' => 'Website', 'github_username' => 'GitHub username', 'x_username' => 'X username'] as $field => $label)
+            @foreach (['location' => 'Location', 'website_url' => 'Website', 'x_username' => 'X username'] as $field => $label)
                 <div>
                     <label class="form-label" for="{{ $field }}">{{ $label }}</label>
                     <input class="form-input" id="{{ $field }}" name="{{ $field }}" value="{{ old($field, $user->{$field}) }}" @if ($field === 'website_url') type="url" @endif />
                     @error($field)<p class="form-error">{{ $message }}</p>@enderror
                 </div>
             @endforeach
+
+            @if ($user->github_username)
+                <div>
+                    <span class="form-label">GitHub account</span>
+                    <a class="form-input flex items-center justify-between" href="https://github.com/{{ $user->github_username }}" rel="me noopener noreferrer" target="_blank">
+                        <span>{{ '@'.$user->github_username }}</span>
+                        <span class="text-zinc-400" aria-hidden="true">↗</span>
+                    </a>
+                    <p class="form-help">Managed by your verified GitHub sign-in.</p>
+                </div>
+            @endif
 
             <fieldset class="sm:col-span-2">
                 <legend class="form-label">Your stack</legend>

@@ -39,7 +39,6 @@ class UpdateCommunityProfileRequest extends FormRequest
             'bio' => ['nullable', 'string', 'max:600'],
             'location' => ['nullable', 'string', 'max:100'],
             'website_url' => ['nullable', 'url:http,https', 'max:2048'],
-            'github_username' => ['nullable', 'string', 'max:39', 'regex:/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/'],
             'x_username' => ['nullable', 'string', 'max:15', 'regex:/^[A-Za-z0-9_]+$/'],
             'avatar_url' => ['nullable', 'url:https', 'max:2048'],
             'avatar' => ['nullable', File::image()->max('5mb')],

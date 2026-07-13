@@ -60,7 +60,6 @@ use Laravel\Sanctum\HasApiTokens;
     'bio',
     'location',
     'website_url',
-    'github_username',
     'x_username',
     'avatar_url',
     'avatar_disk',
