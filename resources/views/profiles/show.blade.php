@@ -63,11 +63,11 @@
         <nav class="mb-5 flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-white/8" aria-label="Profile content">
             @foreach ([
                 'posts' => 'Posts',
+                ...($user->github_id && $user->github_username ? ['github' => 'GitHub'] : []),
                 'replies' => 'Replies',
                 'reposts' => 'Reposts',
                 'likes' => 'Likes',
                 'projects' => 'Packages',
-                ...($user->github_id && $user->github_username ? ['github' => 'GitHub'] : []),
             ] as $tab => $label)
                 <a href="{{ route('profiles.show', [$user, 'tab' => $tab]) }}" @class(['border-b-2 px-4 py-3 text-sm font-medium transition', 'border-[#ff4d73] text-zinc-950 dark:text-white' => $activeTab === $tab, 'border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200' => $activeTab !== $tab])>{{ $label }}</a>
             @endforeach
