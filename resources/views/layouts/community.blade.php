@@ -44,7 +44,7 @@
                         <flux:modal.trigger name="community-composer">
                             <flux:button variant="primary" icon="pencil-square" class="hidden rounded-full! bg-[#ff4d73]! hover:bg-[#ff6382]! sm:inline-flex">Post</flux:button>
                         </flux:modal.trigger>
-                        <a href="{{ route('profiles.show', auth()->user()) }}" class="loom-avatar" title="Your profile"><img class="size-full object-cover" src="{{ auth()->user()->avatarUrl() }}" alt="" /></a>
+                        <x-community-user-menu />
                     @else
                         <a href="{{ route('login') }}" class="hidden px-3 py-2 text-sm text-zinc-600 transition hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white sm:inline">Log in</a>
                         <a href="{{ route('register') }}" class="loom-button"><span class="sm:hidden">Join</span><span class="hidden sm:inline">Join the community</span></a>

@@ -78,4 +78,19 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_authenticated_community_header_offers_logout(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-test="community-user-menu"', false)
+            ->assertSee('data-test="community-logout-button"', false)
+            ->assertSee(route('logout'), false)
+            ->assertSee('Log out');
+
+        $this->get(route('logout'))->assertMethodNotAllowed();
+    }
 }
