@@ -21,17 +21,10 @@ class FeedController extends Controller
 
         $posts = Post::query()
             ->published()
-            ->with(['user', 'attachments'])
+            ->with(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
-            ->when($search !== '', function (Builder $query) use ($search): void {
-                $query->where(function (Builder $query) use ($search): void {
-                    $query->whereLike('title', "%{$search}%")
-                        ->orWhereLike('body', "%{$search}%")
-                        ->orWhereLike('summary', "%{$search}%")
-                        ->orWhereLike('source_name', "%{$search}%");
-                });
-            })
+            ->when($search !== '', fn (Builder $query): Builder => $query->matchingSearch($search))
             ->when($feed === 'following' && $request->user() instanceof User, function (Builder $query) use ($request): void {
                 $query->whereIn('user_id', $request->user()->following()->pluck('users.id'));
             })

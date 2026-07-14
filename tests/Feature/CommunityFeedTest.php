@@ -71,11 +71,15 @@ class CommunityFeedTest extends TestCase
         $suggested = User::factory()->create(['name' => 'Suggested Maker']);
         $member->following()->attach($alreadyFollowed);
 
-        $this->actingAs($member)
+        $response = $this->actingAs($member)
             ->get(route('home'))
-            ->assertOk()
-            ->assertDontSee('Signed In Member')
-            ->assertDontSee('Already Followed')
+            ->assertOk();
+        $peopleIds = collect($response->viewData('people'))->pluck('id')->all();
+
+        $this->assertNotContains($member->id, $peopleIds);
+        $this->assertNotContains($alreadyFollowed->id, $peopleIds);
+
+        $response
             ->assertSee('Suggested Maker')
             ->assertSee(route('profiles.follow', $suggested), false)
             ->assertSee('Follow');

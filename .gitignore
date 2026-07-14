@@ -29,3 +29,6 @@ yarn-error.log
 /.cursor
 /.junie
 CLAUDE.md
+
+/frankenphp
+/public/frankenphp-worker.php

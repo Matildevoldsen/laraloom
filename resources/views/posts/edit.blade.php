@@ -26,7 +26,8 @@
         </div>
         <div>
             <label class="form-label" for="body">Your take</label>
-            <textarea class="form-input min-h-36 resize-y" id="body" name="body" maxlength="1500">{{ old('body', $post->body) }}</textarea>
+            <textarea class="form-input min-h-36 resize-y" id="body" name="body" maxlength="1500" data-composer-textarea>{{ old('body', $post->body) }}</textarea>
+            <livewire:composer-autocomplete />
             @error('body')<p class="form-error">{{ $message }}</p>@enderror
         </div>
         <div>

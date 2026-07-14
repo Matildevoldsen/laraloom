@@ -29,7 +29,7 @@ class ProfileController extends Controller
 
         $posts = $user->posts()
             ->where('status', PostStatus::Published)
-            ->with('attachments')
+            ->with(['attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('published_at')
@@ -44,7 +44,7 @@ class ProfileController extends Controller
         $replies = $user->comments()->with('post')->latest()->limit(20)->get();
         $likedPosts = $user->reactedPosts()
             ->where('status', PostStatus::Published)
-            ->with(['user', 'attachments'])
+            ->with(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('reactions.created_at')
@@ -52,7 +52,7 @@ class ProfileController extends Controller
             ->get();
         $repostedPosts = $user->repostedPosts()
             ->where('status', PostStatus::Published)
-            ->with(['user', 'attachments'])
+            ->with(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withViewerInteractionState($viewer instanceof User ? $viewer : null)
             ->latest('reposts.created_at')

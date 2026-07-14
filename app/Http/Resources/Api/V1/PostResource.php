@@ -33,6 +33,16 @@ class PostResource extends JsonResource
                 'author' => $this->source_author,
             ],
             'tags' => $this->tags ?? [],
+            'hashtags' => $this->whenLoaded('hashtags', fn () => $this->hashtags->map(fn ($hashtag): array => [
+                'id' => $hashtag->getKey(),
+                'name' => $hashtag->name,
+                'slug' => $hashtag->slug,
+            ])->values()),
+            'mentions' => $this->whenLoaded('mentions', fn () => $this->mentions->map(fn ($mention): array => [
+                'id' => $mention->getKey(),
+                'handle' => $mention->handle,
+                'user' => UserResource::make($mention->mentionedUser),
+            ])->values()),
             'attachments' => $this->whenLoaded('attachments', fn () => $this->attachments->map(fn ($attachment): array => [
                 'id' => $attachment->getKey(),
                 'type' => $attachment->media_type,

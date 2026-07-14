@@ -110,7 +110,7 @@ new class extends Component
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#ff7693]">Your activity</p>
             <h1 class="mt-2 text-3xl font-semibold tracking-[-.04em] sm:text-4xl">Notifications</h1>
-            <p class="mt-2 text-sm text-zinc-500">Follows, likes, comments, replies, and reposts from the community.</p>
+            <p class="mt-2 text-sm text-zinc-500">Follows, mentions, likes, comments, replies, and reposts from the community.</p>
         </div>
 
         @if ($this->unreadCount > 0)
@@ -150,6 +150,7 @@ new class extends Component
             @php($data = $notification->data)
             @php($iconClasses = match ($data['kind']) {
                 'follow' => 'bg-violet-500 text-white',
+                'mention' => 'bg-[#ff4d73] text-white',
                 'reaction' => 'bg-[#ff4d73] text-white',
                 'comment', 'reply' => 'bg-sky-500 text-white',
                 'repost' => 'bg-emerald-500 text-white',

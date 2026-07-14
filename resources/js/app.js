@@ -1,5 +1,8 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import './composer-autocomplete';
+import './composer-form';
+import './composer-highlighter';
 import { initializePostActions } from './post-actions';
 
 const key = import.meta.env.VITE_PUSHER_APP_KEY;

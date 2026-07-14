@@ -44,16 +44,16 @@
             @endif
         </header>
 
-        <a href="{{ route('posts.show', $post) }}" class="mt-4 block">
-            @if ($post->title)
+        @if ($post->title)
+            <a href="{{ route('posts.show', $post) }}" class="mt-4 block">
                 <h2 class="text-xl font-semibold leading-snug tracking-[-0.025em] text-zinc-950 transition group-hover:text-[#d92855] dark:text-white dark:group-hover:text-[#ff7693] sm:text-[22px]">{{ $post->title }}</h2>
-            @endif
-            @if ($post->body)
-                <p @class(['mt-2 whitespace-pre-line text-[15px] leading-6 text-zinc-600 dark:text-zinc-400', 'line-clamp-4' => $compact])>{{ $post->body }}</p>
-            @elseif ($post->summary)
-                <p @class(['mt-2 text-[15px] leading-6 text-zinc-600 dark:text-zinc-400', 'line-clamp-4' => $compact])>{{ $post->summary }}</p>
-            @endif
-        </a>
+            </a>
+        @endif
+        @if ($post->body)
+            <p @class(['whitespace-pre-line text-[15px] leading-6 text-zinc-600 dark:text-zinc-400', 'mt-2' => $post->title, 'mt-4' => ! $post->title, 'line-clamp-4' => $compact])><x-post-body :$post /></p>
+        @elseif ($post->summary)
+            <a href="{{ route('posts.show', $post) }}" @class(['block text-[15px] leading-6 text-zinc-600 dark:text-zinc-400', 'mt-2' => $post->title, 'mt-4' => ! $post->title, 'line-clamp-4' => $compact])>{{ $post->summary }}</a>
+        @endif
 
         @if ($post->relationLoaded('attachments') && $post->attachments->isNotEmpty())
             <div @class(['mt-4 grid overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-white/8 dark:bg-black/20', 'grid-cols-2' => $post->attachments->count() > 1])>

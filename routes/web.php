@@ -17,6 +17,7 @@ use App\Http\Controllers\DirectMessageController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GitHubAuthenticationController;
+use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\LegalAcceptanceController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationController;
@@ -46,6 +47,7 @@ Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
 
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+Route::get('/hashtags/{hashtag:slug}', HashtagController::class)->name('hashtags.show');
 Route::get('/@{user:username}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::get('/posts/{post}', [PostController::class, 'show'])->whereNumber('post')->name('posts.show');
 Route::get('/media/{attachment}', PostAttachmentController::class)->name('post-attachments.show');
@@ -97,7 +99,9 @@ Route::middleware(['auth', 'legal.accepted'])->group(function (): void {
         ->middleware('throttle:community-publishing')
         ->name('posts.store');
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::put('/posts/{post}', [PostController::class, 'update'])
+        ->middleware('throttle:community-publishing')
+        ->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
         ->middleware('throttle:community-interactions')

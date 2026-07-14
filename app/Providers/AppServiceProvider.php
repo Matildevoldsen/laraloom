@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Comment;
 use App\Models\Follow;
+use App\Models\Mention;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\Repost;
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         Reaction::observe(CommunityActivityObserver::class);
         Repost::observe(CommunityActivityObserver::class);
         Follow::observe(CommunityNotificationObserver::class);
+        Mention::observe(CommunityNotificationObserver::class);
         Comment::observe(CommunityNotificationObserver::class);
         Reaction::observe(CommunityNotificationObserver::class);
         Repost::observe(CommunityNotificationObserver::class);

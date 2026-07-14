@@ -142,6 +142,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Comment::class);
     }
 
+    /** @return HasMany<Mention, $this> */
+    public function receivedMentions(): HasMany
+    {
+        return $this->hasMany(Mention::class, 'mentioned_user_id');
+    }
+
     /** @return HasMany<LegalAcceptance, $this> */
     public function legalAcceptances(): HasMany
     {

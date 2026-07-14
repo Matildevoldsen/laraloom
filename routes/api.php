@@ -45,7 +45,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('/posts', [PostController::class, 'store'])
             ->middleware('throttle:community-publishing')
             ->name('posts.store');
-        Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::patch('/posts/{post}', [PostController::class, 'update'])
+            ->middleware('throttle:community-publishing')
+            ->name('posts.update');
         Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
         Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
             ->middleware('throttle:community-interactions')

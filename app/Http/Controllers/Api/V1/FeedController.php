@@ -22,21 +22,14 @@ class FeedController extends Controller
 
         $posts = Post::query()
             ->published()
-            ->with(['user', 'attachments'])
+            ->with(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->when($user instanceof User, fn (Builder $query): Builder => $query->withExists([
                 'reactingUsers as is_reacted' => fn (Builder $query): Builder => $query->whereKey($user->id),
                 'bookmarkingUsers as is_bookmarked' => fn (Builder $query): Builder => $query->whereKey($user->id),
                 'repostingUsers as is_reposted' => fn (Builder $query): Builder => $query->whereKey($user->id),
             ]))
-            ->when($search !== '', function (Builder $query) use ($search): void {
-                $query->where(function (Builder $query) use ($search): void {
-                    $query->whereLike('title', "%{$search}%")
-                        ->orWhereLike('body', "%{$search}%")
-                        ->orWhereLike('summary', "%{$search}%")
-                        ->orWhereLike('source_name', "%{$search}%");
-                });
-            })
+            ->when($search !== '', fn (Builder $query): Builder => $query->matchingSearch($search))
             ->when(in_array($kind, $allowedKinds, true), fn (Builder $query): Builder => $query->where('kind', $kind))
             ->latest('published_at')
             ->latest('id')

@@ -15,7 +15,7 @@ class BookmarkedPostController extends Controller
 
         $posts = $user->bookmarkedPosts()
             ->published()
-            ->with(['user', 'attachments'])
+            ->with(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->withCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->withViewerInteractionState($user)
             ->orderByPivot('created_at', 'desc')

@@ -49,6 +49,12 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'cloudflare' => [
+            'transport' => 'cloudflare',
+            'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+            'token' => env('CLOUDFLARE_EMAIL_TOKEN'),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

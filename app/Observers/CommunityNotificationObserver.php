@@ -6,6 +6,7 @@ use App\CommunityNotificationType;
 use App\Events\CommunityNotificationCreated;
 use App\Models\Comment;
 use App\Models\Follow;
+use App\Models\Mention;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\Repost;
@@ -14,14 +15,30 @@ use App\Notifications\CommunityInteractionNotification;
 
 class CommunityNotificationObserver
 {
-    public function created(Follow|Comment|Reaction|Repost $activity): void
+    public function created(Follow|Comment|Mention|Reaction|Repost $activity): void
     {
         match (true) {
             $activity instanceof Follow => $this->notifyAboutFollow($activity),
             $activity instanceof Comment => $this->notifyAboutComment($activity),
+            $activity instanceof Mention => $this->notifyAboutMention($activity),
             $activity instanceof Reaction => $this->notifyPostAuthor($activity, CommunityNotificationType::Reaction),
             $activity instanceof Repost => $this->notifyPostAuthor($activity, CommunityNotificationType::Repost),
         };
+    }
+
+    private function notifyAboutMention(Mention $mention): void
+    {
+        $mention->loadMissing(['mentionedUser', 'post.user']);
+        $actor = $mention->post->user;
+
+        if ($actor instanceof User) {
+            $this->notify(
+                $mention->mentionedUser,
+                $actor,
+                CommunityNotificationType::Mention,
+                $mention->post,
+            );
+        }
     }
 
     private function notifyAboutFollow(Follow $follow): void

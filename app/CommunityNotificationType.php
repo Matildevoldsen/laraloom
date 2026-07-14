@@ -6,6 +6,7 @@ enum CommunityNotificationType: string
 {
     case Comment = 'comment';
     case Follow = 'follow';
+    case Mention = 'mention';
     case Reaction = 'reaction';
     case Reply = 'reply';
     case Repost = 'repost';
@@ -15,6 +16,7 @@ enum CommunityNotificationType: string
         return match ($this) {
             self::Comment => 'commented on your post',
             self::Follow => 'followed you',
+            self::Mention => 'mentioned you in a post',
             self::Reaction => 'liked your post',
             self::Reply => 'replied to your comment',
             self::Repost => 'reposted your post',
@@ -26,6 +28,7 @@ enum CommunityNotificationType: string
         return match ($this) {
             self::Comment, self::Reply => 'chat-bubble-left',
             self::Follow => 'user-plus',
+            self::Mention => 'at-symbol',
             self::Reaction => 'heart',
             self::Repost => 'arrow-path-rounded-square',
         };

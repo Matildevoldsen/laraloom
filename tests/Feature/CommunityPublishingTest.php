@@ -34,6 +34,35 @@ class CommunityPublishingTest extends TestCase
         $this->assertSame($member->id, $post->user_id);
     }
 
+    public function test_post_composer_only_shows_loading_state_while_submitting(): void
+    {
+        $member = User::factory()->create();
+
+        $this->actingAs($member)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('x-on:submit="submitting = true"', false)
+            ->assertSee('x-bind:disabled="submitting || (! body.trim() && attachments.length === 0)"', false)
+            ->assertSee('x-show="! submitting"', false)
+            ->assertSee('x-show="submitting"', false)
+            ->assertDontSee('data-flux-loading-indicator', false);
+    }
+
+    public function test_post_composer_accepts_images_pasted_from_the_clipboard(): void
+    {
+        $member = User::factory()->create();
+
+        $this->actingAs($member)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('composerForm({', false)
+            ->assertSee('x-on:paste="pasteAttachments($event)"', false)
+            ->assertSee('x-ref="attachments"', false)
+            ->assertSee('x-for="attachment in attachmentItems"', false)
+            ->assertSee('aria-live="polite"', false)
+            ->assertSee('data-flux-error', false);
+    }
+
     public function test_member_can_publish_a_laravel_cloud_project(): void
     {
         $member = User::factory()->create();

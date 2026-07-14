@@ -19,7 +19,7 @@ class PostController extends Controller
     {
         abort_unless($post->published_at?->isPast(), 404);
         $viewer = $request->user();
-        $post->load(['user', 'attachments'])
+        $post->load(['user', 'attachments', 'hashtags', 'mentions.mentionedUser'])
             ->loadCount(['reactingUsers', 'bookmarkingUsers', 'repostingUsers', 'comments'])
             ->loadViewerInteractionState($viewer instanceof User ? $viewer : null);
         $comments = $post->comments()

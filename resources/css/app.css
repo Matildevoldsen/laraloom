@@ -65,6 +65,49 @@
     backdrop-filter: blur(2px);
 }
 
+.composer-highlighter {
+    pointer-events: none;
+    border-color: transparent;
+    color: var(--color-zinc-700);
+    overflow-wrap: break-word;
+}
+
+.dark .composer-highlighter {
+    color: var(--color-zinc-200);
+}
+
+textarea[data-composer-textarea][data-highlight-active='true'] {
+    color: transparent !important;
+    caret-color: var(--color-zinc-900);
+    -webkit-text-fill-color: transparent;
+}
+
+.dark textarea[data-composer-textarea][data-highlight-active='true'] {
+    caret-color: var(--color-zinc-100);
+}
+
+textarea[data-composer-textarea][data-highlight-active='true']::placeholder {
+    color: var(--color-zinc-400) !important;
+    -webkit-text-fill-color: var(--color-zinc-400);
+}
+
+textarea[data-composer-textarea][data-highlight-active='true']::selection {
+    color: transparent;
+}
+
+.social-token {
+    color: #d92855;
+    font-weight: 500;
+}
+
+.dark .social-token {
+    color: #ff7693;
+}
+
+a.social-token:hover {
+    text-decoration: underline;
+}
+
 [data-flux-field]:not(ui-radio, ui-checkbox) {
     @apply grid gap-2;
 }
@@ -77,6 +120,11 @@ input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+textarea:focus[data-flux-control][data-composer-textarea] {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* \[:where(&)\]:size-4 {

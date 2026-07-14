@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -85,6 +86,18 @@ class Post extends Model
         return $this->hasMany(PostAttachment::class);
     }
 
+    /** @return BelongsToMany<Hashtag, $this> */
+    public function hashtags(): BelongsToMany
+    {
+        return $this->belongsToMany(Hashtag::class)->withTimestamps();
+    }
+
+    /** @return HasMany<Mention, $this> */
+    public function mentions(): HasMany
+    {
+        return $this->hasMany(Mention::class);
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (Post $post): void {
@@ -98,6 +111,45 @@ class Post extends Model
         $query->where('status', PostStatus::Published)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
+    }
+
+    /** @param Builder<Post> $query */
+    public function scopeMatchingSearch(Builder $query, string $search): void
+    {
+        $search = Str::of($search)->trim()->limit(80, '')->toString();
+
+        if ($search === '') {
+            return;
+        }
+
+        if (Str::startsWith($search, '#')) {
+            $hashtag = Str::of($search)->after('#')->before(' ')->lower()->toString();
+
+            $query->whereHas('hashtags', fn (Builder $query): Builder => $query->where('slug', $hashtag));
+
+            return;
+        }
+
+        $query->where(function (Builder $query) use ($search): void {
+            $query->whereLike('title', "%{$search}%")
+                ->orWhereLike('body', "%{$search}%")
+                ->orWhereLike('summary', "%{$search}%")
+                ->orWhereLike('source_name', "%{$search}%")
+                ->orWhereHas('hashtags', function (Builder $query) use ($search): void {
+                    $query->whereLike('name', "%{$search}%")
+                        ->orWhereLike('slug', "%{$search}%");
+                })
+                ->orWhereHas('user', function (Builder $query) use ($search): void {
+                    $query->whereLike('name', "%{$search}%")
+                        ->orWhereLike('username', "%{$search}%");
+                });
+        });
+    }
+
+    /** @param Builder<Post> $query */
+    public function scopeWithSocialReferences(Builder $query): void
+    {
+        $query->with(['hashtags', 'mentions.mentionedUser']);
     }
 
     /** @param Builder<Post> $query */
